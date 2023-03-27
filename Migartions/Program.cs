@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Migartions.Helpers;
 using Migartions.Persistance;
 using System.Net.NetworkInformation;
 
@@ -6,7 +7,7 @@ namespace Migartions
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ namespace Migartions
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            await app.Services.ApplyMigarationForDbContext<ComposeApiDbContext>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

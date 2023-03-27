@@ -2,7 +2,7 @@
 
 namespace Migartions.Helpers
 {
-    public class DbContexthelper
+    public class DbContextHelper
     {
         public static async Task ApplyMigrations(DbContext context)
         {

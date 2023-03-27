@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Migartions.Models;
+using Migartions.Persistance;
 
 namespace Migartions.Controllers
 {
@@ -12,22 +15,34 @@ namespace Migartions.Controllers
     };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ComposeApiDbContext _context;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ComposeApiDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet(Name = "GetSportsmens")]
+        public async Task <IEnumerable<Sportsmen>> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return await _context.Sportsmens.ToListAsync();
+        }
+
+        [HttpPost("addSportsmen")]
+        public async Task AddSportsmen()
+        {
+            for (int i = 0; i < 10; i++)
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                await _context.AddAsync
+                    (new Sportsmen
+                     {
+                        Name ="pip"+i,
+                        Surname = "pip"+i,
+                        Gender = "male"
+                     });
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }
