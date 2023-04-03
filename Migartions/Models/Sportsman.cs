@@ -1,18 +1,18 @@
 ﻿namespace Migartions.Models
 {
-    public class Employee
+    public class Sportsman
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string? Specialization { get; set; }
-
+        public string Gender { get; set; }
+        public DateTime Birthdate { get; set; }
+ 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public ICollection<EmployeeEvent> EmployeeEvents { get; set; }
-
+        public ICollection<Competition> Competitions { get; set; }
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public ICollection<Event> Events { get; set; }
+        public ICollection<SportsmanCompetition> SportsmanCompetitions { get; set; }
     }
 }

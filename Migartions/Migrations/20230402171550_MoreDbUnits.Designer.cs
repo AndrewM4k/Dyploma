@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Migartions.Persistance;
 
@@ -11,9 +12,10 @@ using Migartions.Persistance;
 namespace Migartions.Migrations
 {
     [DbContext(typeof(ComposeApiDbContext))]
-    partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230402171550_MoreDbUnits")]
+    partial class MoreDbUnits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +40,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Competition", (string)null);
+                    b.ToTable("Competition");
                 });
 
             modelBuilder.Entity("Migartions.Models.Employee", b =>
@@ -60,7 +62,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Migartions.Models.EmployeeEvent", b =>
@@ -75,7 +77,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EmployeeEvent", (string)null);
+                    b.ToTable("EmployeeEvent");
                 });
 
             modelBuilder.Entity("Migartions.Models.Event", b =>
@@ -93,7 +95,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Event", (string)null);
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("Migartions.Models.EventCompetition", b =>
@@ -108,7 +110,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventCompetition", (string)null);
+                    b.ToTable("EventCompetition");
                 });
 
             modelBuilder.Entity("Migartions.Models.Movement", b =>
@@ -123,7 +125,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Movement", (string)null);
+                    b.ToTable("Movement");
                 });
 
             modelBuilder.Entity("Migartions.Models.MovementCompetition", b =>
@@ -138,7 +140,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("MovementId");
 
-                    b.ToTable("MovementCompetition", (string)null);
+                    b.ToTable("MovementCompetition");
                 });
 
             modelBuilder.Entity("Migartions.Models.Record", b =>
@@ -174,7 +176,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.ToTable("Record", (string)null);
+                    b.ToTable("Record");
                 });
 
             modelBuilder.Entity("Migartions.Models.Sportsman", b =>
@@ -200,7 +202,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sportsmens", (string)null);
+                    b.ToTable("Sportsmens");
                 });
 
             modelBuilder.Entity("Migartions.Models.SportsmanCompetition", b =>
@@ -215,7 +217,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("SportsmanId");
 
-                    b.ToTable("SportsmanCompetition", (string)null);
+                    b.ToTable("SportsmanCompetition");
                 });
 
             modelBuilder.Entity("Migartions.Models.Standart", b =>
@@ -251,7 +253,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.ToTable("Standart", (string)null);
+                    b.ToTable("Standart");
                 });
 
             modelBuilder.Entity("Migartions.Models.EmployeeEvent", b =>

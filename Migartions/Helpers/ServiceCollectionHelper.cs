@@ -2,7 +2,7 @@
 
 namespace Migartions.Helpers
 {
-    public static class ServiceCollrctionHelper
+    public static class ServiceCollectionHelper
     {
         public static async Task ApplyMigarationForDbContext<T>(this IServiceProvider services) where T : DbContext
         {

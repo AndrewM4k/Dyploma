@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Migartions.Persistance;
 
@@ -11,9 +12,10 @@ using Migartions.Persistance;
 namespace Migartions.Migrations
 {
     [DbContext(typeof(ComposeApiDbContext))]
-    partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230401211145_Database_creation")]
+    partial class Database_creation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,13 +40,16 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Competition", (string)null);
+                    b.ToTable("Competition");
                 });
 
             modelBuilder.Entity("Migartions.Models.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("EventId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -60,22 +65,9 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees", (string)null);
-                });
-
-            modelBuilder.Entity("Migartions.Models.EmployeeEvent", b =>
-                {
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("EmployeeId", "EventId");
-
                     b.HasIndex("EventId");
 
-                    b.ToTable("EmployeeEvent", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Migartions.Models.Event", b =>
@@ -93,7 +85,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Event", (string)null);
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("Migartions.Models.EventCompetition", b =>
@@ -108,7 +100,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventCompetition", (string)null);
+                    b.ToTable("EventCompetition");
                 });
 
             modelBuilder.Entity("Migartions.Models.Movement", b =>
@@ -117,56 +109,10 @@ namespace Migartions.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CompetitionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Movement", (string)null);
-                });
-
-            modelBuilder.Entity("Migartions.Models.MovementCompetition", b =>
-                {
-                    b.Property<Guid>("CompetitionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MovementId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CompetitionId", "MovementId");
-
-                    b.HasIndex("MovementId");
-
-                    b.ToTable("MovementCompetition", (string)null);
-                });
-
-            modelBuilder.Entity("Migartions.Models.Record", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Age")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CompetitionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TypeOfRecord")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeightOfSportsman")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeightStandart")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -174,7 +120,7 @@ namespace Migartions.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.ToTable("Record", (string)null);
+                    b.ToTable("Movement");
                 });
 
             modelBuilder.Entity("Migartions.Models.Sportsman", b =>
@@ -200,7 +146,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sportsmens", (string)null);
+                    b.ToTable("Sportsmens");
                 });
 
             modelBuilder.Entity("Migartions.Models.SportsmanCompetition", b =>
@@ -215,58 +161,14 @@ namespace Migartions.Migrations
 
                     b.HasIndex("SportsmanId");
 
-                    b.ToTable("SportsmanCompetition", (string)null);
+                    b.ToTable("SportsmanCompetition");
                 });
 
-            modelBuilder.Entity("Migartions.Models.Standart", b =>
+            modelBuilder.Entity("Migartions.Models.Employee", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Age")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CompetitionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeightOfSportsman")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WeightStandart")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompetitionId");
-
-                    b.ToTable("Standart", (string)null);
-                });
-
-            modelBuilder.Entity("Migartions.Models.EmployeeEvent", b =>
-                {
-                    b.HasOne("Migartions.Models.Employee", null)
-                        .WithMany("EmployeeEvents")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Migartions.Models.Event", null)
-                        .WithMany("EmployeeEvents")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Employees")
+                        .HasForeignKey("EventId");
                 });
 
             modelBuilder.Entity("Migartions.Models.EventCompetition", b =>
@@ -284,30 +186,11 @@ namespace Migartions.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Migartions.Models.MovementCompetition", b =>
+            modelBuilder.Entity("Migartions.Models.Movement", b =>
                 {
                     b.HasOne("Migartions.Models.Competition", null)
-                        .WithMany("MovementCompetitions")
-                        .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Migartions.Models.Movement", null)
-                        .WithMany("MovementCompetitions")
-                        .HasForeignKey("MovementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Migartions.Models.Record", b =>
-                {
-                    b.HasOne("Migartions.Models.Competition", "Competition")
-                        .WithMany("Records")
-                        .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Competition");
+                        .WithMany("Movements")
+                        .HasForeignKey("CompetitionId");
                 });
 
             modelBuilder.Entity("Migartions.Models.SportsmanCompetition", b =>
@@ -325,45 +208,20 @@ namespace Migartions.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Migartions.Models.Standart", b =>
-                {
-                    b.HasOne("Migartions.Models.Competition", "Competition")
-                        .WithMany("Standarts")
-                        .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Competition");
-                });
-
             modelBuilder.Entity("Migartions.Models.Competition", b =>
                 {
                     b.Navigation("EventCompetitions");
 
-                    b.Navigation("MovementCompetitions");
-
-                    b.Navigation("Records");
+                    b.Navigation("Movements");
 
                     b.Navigation("SportsmanCompetitions");
-
-                    b.Navigation("Standarts");
-                });
-
-            modelBuilder.Entity("Migartions.Models.Employee", b =>
-                {
-                    b.Navigation("EmployeeEvents");
                 });
 
             modelBuilder.Entity("Migartions.Models.Event", b =>
                 {
-                    b.Navigation("EmployeeEvents");
+                    b.Navigation("Employees");
 
                     b.Navigation("EventCompetitions");
-                });
-
-            modelBuilder.Entity("Migartions.Models.Movement", b =>
-                {
-                    b.Navigation("MovementCompetitions");
                 });
 
             modelBuilder.Entity("Migartions.Models.Sportsman", b =>
