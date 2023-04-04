@@ -26,5 +26,13 @@ namespace Migartions.Models
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<EmployeeEvent> EmployeeEvents { get; set; }
+        
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ICollection<Sportsman> Sportsmans { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ICollection<EventSportsman> EventSportsmans { get; set; }
     }
 }

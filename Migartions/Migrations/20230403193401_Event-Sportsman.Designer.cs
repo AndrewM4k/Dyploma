@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Migartions.Persistance;
 
@@ -11,9 +12,10 @@ using Migartions.Persistance;
 namespace Migartions.Migrations
 {
     [DbContext(typeof(ComposeApiDbContext))]
-    partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230403193401_Event-Sportsman")]
+    partial class EventSportsman
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,7 +217,7 @@ namespace Migartions.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sportsmans");
+                    b.ToTable("Sportsmens");
                 });
 
             modelBuilder.Entity("Migartions.Models.SportsmanCompetition", b =>

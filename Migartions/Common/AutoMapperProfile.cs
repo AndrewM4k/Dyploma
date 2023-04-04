@@ -14,6 +14,9 @@ namespace ApiWithEF.Common
             CreateMap<GetSportsmanDto, Sportsman>();
             CreateMap<Sportsman, GetSportsmanDto>();
 
+            CreateMap<UpdateSportsmanDto, Sportsman>();
+            CreateMap<Sportsman, UpdateSportsmanDto>();
+
             CreateMap<AddEventDto, Event>();
             CreateMap<Event, AddEventDto>();
 

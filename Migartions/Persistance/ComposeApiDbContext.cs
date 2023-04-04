@@ -5,7 +5,7 @@ namespace Migartions.Persistance
 {
     public class ComposeApiDbContext : DbContext
     {
-        public DbSet<Sportsman> Sportsmens { get; set; }
+        public DbSet<Sportsman> Sportsmans { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Event> Event { get; set; }
         public DbSet<Record> Record { get; set; }
@@ -74,6 +74,20 @@ namespace Migartions.Persistance
                     competition => competition
                         .HasOne<Event>()
                         .WithMany(e => e.EmployeeEvents)
+                        .HasForeignKey(ee => ee.EventId)
+                    );
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Sportsmans)
+                .WithMany(e => e.Events)
+                .UsingEntity<EventSportsman>(
+            eevent => eevent
+                        .HasOne<Sportsman>()
+                        .WithMany(e => e.EventSportsmans)
+                        .HasForeignKey(ee => ee.SportsmanId),
+                    competition => competition
+                        .HasOne<Event>()
+                        .WithMany(e => e.EventSportsmans)
                         .HasForeignKey(ee => ee.EventId)
                     );
 
