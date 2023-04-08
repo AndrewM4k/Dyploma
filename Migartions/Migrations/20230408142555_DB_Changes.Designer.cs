@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Migartions.Persistance;
 
@@ -11,9 +12,10 @@ using Migartions.Persistance;
 namespace Migartions.Migrations
 {
     [DbContext(typeof(ComposeApiDbContext))]
-    partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230408142555_DB_Changes")]
+    partial class DB_Changes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,11 +30,9 @@ namespace Migartions.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SportsmanCompetitionCompetitionId")
                         .HasColumnType("uniqueidentifier");
@@ -154,10 +154,6 @@ namespace Migartions.Migrations
 
                     b.Property<DateTime>("DateofStart")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -299,14 +295,19 @@ namespace Migartions.Migrations
                     b.Property<Guid>("SportsmanId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("StreamId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AttemptNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AttemptState")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
 
                     b.HasKey("CompetitionId", "SportsmanId");
 
                     b.HasIndex("SportsmanId");
-
-                    b.HasIndex("StreamId");
 
                     b.ToTable("SportsmanCompetition", (string)null);
                 });
@@ -340,29 +341,6 @@ namespace Migartions.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Standart");
-                });
-
-            modelBuilder.Entity("Migartions.Models.Streama", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("Stream");
                 });
 
             modelBuilder.Entity("Migartions.Models.Attempt", b =>
@@ -475,25 +453,6 @@ namespace Migartions.Migrations
                         .HasForeignKey("SportsmanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Migartions.Models.Streama", "Stream")
-                        .WithMany("SportsmanCompetitions")
-                        .HasForeignKey("StreamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Stream");
-                });
-
-            modelBuilder.Entity("Migartions.Models.Streama", b =>
-                {
-                    b.HasOne("Migartions.Models.Event", "Event")
-                        .WithMany("Shedule")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("Migartions.Models.Competition", b =>
@@ -519,8 +478,6 @@ namespace Migartions.Migrations
                     b.Navigation("EventCompetitions");
 
                     b.Navigation("EventSportsmans");
-
-                    b.Navigation("Shedule");
                 });
 
             modelBuilder.Entity("Migartions.Models.Record", b =>
@@ -548,11 +505,6 @@ namespace Migartions.Migrations
             modelBuilder.Entity("Migartions.Models.Standart", b =>
                 {
                     b.Navigation("CompetitionStandarts");
-                });
-
-            modelBuilder.Entity("Migartions.Models.Streama", b =>
-                {
-                    b.Navigation("SportsmanCompetitions");
                 });
 #pragma warning restore 612, 618
         }

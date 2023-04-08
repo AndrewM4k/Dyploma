@@ -10,8 +10,10 @@ namespace Migartions.Persistance
         public DbSet<Event> Event { get; set; }
         public DbSet<Record> Record { get; set; }
         public DbSet<Standart> Standart { get; set; }
-        public DbSet<Movement> Movement { get; set; }
         public DbSet<Competition> Competition { get; set; }
+        public DbSet<SportsmanCompetition> SportsmanCompetition { get; set; }
+        public DbSet<Streama> Stream { get; set; }
+        public DbSet<Attempt> Attempt { get; set; }
 
         public ComposeApiDbContext(DbContextOptions<ComposeApiDbContext> options)
             : base(options)
@@ -20,6 +22,9 @@ namespace Migartions.Persistance
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<SportsmanCompetition>()
+                .ToTable("SportsmanCompetition");
 
             modelBuilder.Entity<Event>()
                 .HasMany(e => e.Competitions)
@@ -47,20 +52,6 @@ namespace Migartions.Persistance
                         .HasOne<Sportsman>()
                         .WithMany(s => s.SportsmanCompetitions)
                         .HasForeignKey(sc => sc.SportsmanId)
-                    );
-
-            modelBuilder.Entity<Competition>()
-                .HasMany(c => c.Movements)
-                .WithMany(m => m.Competitions)
-                .UsingEntity<MovementCompetition>(
-                    competition => competition
-                        .HasOne<Movement>()
-                        .WithMany(c => c.MovementCompetitions)
-                        .HasForeignKey(mc => mc.MovementId),
-                    movement => movement
-                        .HasOne<Competition>()
-                        .WithMany(p => p.MovementCompetitions)
-                        .HasForeignKey(o => o.CompetitionId)
                     );
 
             modelBuilder.Entity<Event>()
@@ -92,12 +83,48 @@ namespace Migartions.Persistance
                     );
 
             modelBuilder.Entity<Competition>()
-                .HasMany(s => s.Standarts)
-                .WithOne(o => o.Competition);
+               .HasMany(e => e.Standarts)
+               .WithMany(e => e.Competitions)
+               .UsingEntity<CompetitionStandart>(
+           competition => competition
+                       .HasOne<Standart>()
+                       .WithMany(c => c.CompetitionStandarts)
+                       .HasForeignKey(c => c.StandartId),
+                   standart => standart
+                       .HasOne<Competition>()
+                       .WithMany(s => s.CompetitionStandarts)
+                       .HasForeignKey(s => s.CompetitionId)
+                   );
 
             modelBuilder.Entity<Competition>()
-                .HasMany(s => s.Records)
-                .WithOne(o => o.Competition);
+               .HasMany(e => e.Records)
+               .WithMany(e => e.Competitions)
+               .UsingEntity<CompetitionRecord>(
+           competition => competition
+                       .HasOne<Record>()
+                       .WithMany(c => c.CompetitionRecords)
+                       .HasForeignKey(c => c.RecordId),
+                   record => record
+                       .HasOne<Competition>()
+                       .WithMany(r => r.CompetitionRecords)
+                       .HasForeignKey(s => s.CompetitionId)
+                   );
+
+            modelBuilder.Entity<Role>()
+                .HasMany(s => s.Employees)
+                .WithOne(o => o.Role);
+
+            modelBuilder.Entity<SportsmanCompetition>()
+                .HasMany(s => s.Attempts)
+                .WithOne(a =>a.SportsmanCompetition);
+
+            modelBuilder.Entity<Streama>()
+                .HasMany(s => s.SportsmanCompetitions)
+                .WithOne(o => o.Stream);
+
+            modelBuilder.Entity<Event>()
+                .HasMany(s => s.Shedule)
+                .WithOne(o => o.Event);
         }
     }
 }

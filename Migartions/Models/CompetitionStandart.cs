@@ -1,8 +1,8 @@
 ﻿namespace Migartions.Models
 {
-    public class MovementCompetition
+    public class CompetitionStandart
     {
-        public Guid MovementId { get; set; }
+        public Guid StandartId { get; set; }
         public Guid CompetitionId { get; set; }
     }
 }

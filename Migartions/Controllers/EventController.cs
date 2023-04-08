@@ -11,34 +11,34 @@ namespace Migartions.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SportsmanController : ControllerBase
+    public class EventController : ControllerBase
     {
-        private readonly ILogger<SportsmanController> _logger;
+        private readonly ILogger<EventController> _logger;
         private readonly ComposeApiDbContext _context;
         private readonly IMapper _mapper;
 
-        public SportsmanController(ILogger<SportsmanController> logger, ComposeApiDbContext context, IMapper mapper)
+        public EventController(ILogger<EventController> logger, ComposeApiDbContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
         }
 
-        [HttpGet("readAllSportsmans")]
-        public async Task<IEnumerable<GetSportsmanDto>> Get()
+        [HttpGet("readAllEvents")]
+        public async Task<IEnumerable<GetEventDto>> Get()
         {
-            return _mapper.ProjectTo<GetSportsmanDto>(_context.Sportsmans);
+            return _mapper.ProjectTo<GetEventDto>(_context.Event);
         }
 
-        [HttpPost("addSportsman")]
-        public async Task<ActionResult> AddSportsman(AddSportsmanDto dto)
+        [HttpPost("addEvent")]
+        public async Task<ActionResult> AddEvent(AddEventDto dto)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var sportsman = _mapper.Map<Sportsman>(dto);
-              
-                await _context.AddAsync(sportsman);
+                var evente = _mapper.Map<Event>(dto);
+
+                await _context.AddAsync(evente);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -52,15 +52,15 @@ namespace Migartions.Controllers
             }
         }
 
-        [HttpPut("updateSportsman")]
-        public async Task<ActionResult> UpdateSportsman(UpdateSportsmanDto dto)
+        [HttpPut("updateEvent")]
+        public async Task<ActionResult> UpdateEvent(UpdateEventDto dto)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var sportsman = _mapper.Map<Sportsman>(dto);
+                var evente = _mapper.Map<Event>(dto);
 
-                _context.Update(sportsman);
+                _context.Update(evente);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -74,20 +74,20 @@ namespace Migartions.Controllers
             }
         }
 
-        [HttpDelete("deleteSportsman/{id:Guid}")]
-        public async Task<ActionResult> DeleteSportsman(Guid id)
+        [HttpDelete("deleteEvent/{id:Guid}")]
+        public async Task<ActionResult> DeleteEvent(Guid id)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var sportsman = await _context.Sportsmans.FirstOrDefaultAsync(s => s.Id == id);
+                var evente = await _context.Event.FirstOrDefaultAsync(s => s.Id == id);
 
-                if (sportsman == null)
+                if (evente == null)
                 {
                     return NotFound();
                 }
 
-                _context.Remove(sportsman);
+                _context.Remove(evente);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();

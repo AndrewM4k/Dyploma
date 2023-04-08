@@ -2,7 +2,7 @@
 
 namespace Migartions.Dtos
 {
-    public class AddStandart
+    public class AddStandartDto
     {
         public string CompetitionName { get; set; }
         public string Age { get; set; }

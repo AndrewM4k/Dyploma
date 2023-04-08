@@ -1,6 +1,6 @@
 ﻿namespace Migartions.Dtos
 {
-    public class GetRecord
+    public class UpdateRecordDto
     {
         public string CompetitionName { get; set; }
         public string Age { get; set; }

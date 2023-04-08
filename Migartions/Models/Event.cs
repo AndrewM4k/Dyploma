@@ -8,8 +8,12 @@ namespace Migartions.Models
         [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public DateTime DateofStart { get; set; }
-        //public Dictionary<string, Competition> Schedule { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ICollection<Streama> Shedule { get; set;}
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]

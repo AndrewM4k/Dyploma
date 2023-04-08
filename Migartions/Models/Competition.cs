@@ -8,14 +8,6 @@
 
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public ICollection<Movement> Movements { get; set; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public ICollection<MovementCompetition> MovementCompetitions { get; set; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<Event> Events { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
@@ -37,5 +29,13 @@
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<Record> Records { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ICollection<CompetitionRecord> CompetitionRecords { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ICollection<CompetitionStandart> CompetitionStandarts { get; set; }
     }
 }

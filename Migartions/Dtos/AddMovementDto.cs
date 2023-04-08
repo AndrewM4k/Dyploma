@@ -1,6 +1,6 @@
 ﻿namespace Migartions.Dtos
 {
-    public class AddMovemetDto
+    public class AddMovementDto
     {
         public string Name { get; set; }
     }
