@@ -15,7 +15,7 @@ namespace SportsCompetition.Services
             _context = context;
         }
 
-        public async Task<Streama> CreationStream(List<Models.SportsmanCompetition> list, Event @event, int number)
+        public async Task<Streama> CreationStream(List<SportsmanCompetition> list, Event @event, int number)
         {
             var streama = new Streama();
             streama.SportsmanCompetitions = list;

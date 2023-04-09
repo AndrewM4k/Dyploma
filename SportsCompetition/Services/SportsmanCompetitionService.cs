@@ -16,7 +16,26 @@ namespace SportsCompetition.Services
             _context = context;
         }
 
-        public async Task<Models.SportsmanCompetition> AttemptsResult(Models.SportsmanCompetition sportsmanCompetition, int nextweight)
+        public async Task<SportsmanCompetition> NextWeight(SportsmanCompetition sportsmanCompetition, int nextweight)
+        {
+            var newAttempt = new Attempt()
+            {
+                Weihgt = nextweight,
+                Number = sportsmanCompetition.Attempts.Last().Number + 1,
+            };
+            sportsmanCompetition.Attempts.Add(newAttempt);
+
+            return sportsmanCompetition;
+        }
+
+        public async Task<SportsmanCompetition> ChangeWeight(SportsmanCompetition sportsmanCompetition, int nextweight)
+        {
+            sportsmanCompetition.Attempts.Last().Weihgt = nextweight;
+
+            return sportsmanCompetition;
+        }
+
+        public async Task<SportsmanCompetition> AttemptsResult(SportsmanCompetition sportsmanCompetition, int nextweight)
         {
             sportsmanCompetition.Attempts.Last().Number += 1;
             return sportsmanCompetition;

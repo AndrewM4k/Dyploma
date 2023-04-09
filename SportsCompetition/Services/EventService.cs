@@ -31,10 +31,9 @@ namespace SportsCompetition.Services
                 foreach (var item2 in item1.SportsmanCompetitions)
                 {
                     int nextweight = 0;
-                    Models.SportsmanCompetition sportsmanCompetition = item2;
+                    SportsmanCompetition sportsmanCompetition = item2;
                     await _sportsmancompetitionservice.AttemptsResult(sportsmanCompetition, nextweight);
                 }
-
                 await _context.SaveChangesAsync();
             }
             await _context.SaveChangesAsync();
