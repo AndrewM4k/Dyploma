@@ -15,11 +15,11 @@ namespace SportsCompetition.Services
             _context = context;
         }
 
-        public async Task<Streama> CreationStream(List<Models.SportsmanCompetition> list, Event evente, int number)
+        public async Task<Streama> CreationStream(List<Models.SportsmanCompetition> list, Event @event, int number)
         {
             var streama = new Streama();
             streama.SportsmanCompetitions = list;
-            streama.EventId = evente.Id;
+            streama.EventId = @event.Id;
             streama.Number = number;
 
             await _context.SaveChangesAsync();

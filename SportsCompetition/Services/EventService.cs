@@ -16,17 +16,17 @@ namespace SportsCompetition.Services
             _sportsmancompetitionservice = sportsmancompetitionservice;
         }
 
-        public async Task<Event> CreationEvent(Event evente, List<Streama> list)
+        public async Task<Event> CreationEvent(Event @event, List<Streama> list)
         {
-            evente.Shedule = list;
+            @event.Shedule = list;
 
             await _context.SaveChangesAsync();
-            return evente;
+            return @event;
         }
-        public async Task<Event> StartEvent(Event evente)
+        public async Task<Event> StartEvent(Event @event)
         {
 
-            foreach (var item1 in evente.Shedule)
+            foreach (var item1 in @event.Shedule)
             {
                 foreach (var item2 in item1.SportsmanCompetitions)
                 {
@@ -38,7 +38,7 @@ namespace SportsCompetition.Services
                 await _context.SaveChangesAsync();
             }
             await _context.SaveChangesAsync();
-            return evente;
+            return @event;
         }
     }
 }

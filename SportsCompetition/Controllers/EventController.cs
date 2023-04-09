@@ -5,6 +5,7 @@ using SportsCompetition.Dtos;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace SportsCompetition.Controllers
 {
@@ -36,9 +37,9 @@ namespace SportsCompetition.Controllers
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var evente = _mapper.Map<Event>(dto);
+                var @event = _mapper.Map<Event>(dto);
 
-                await _context.AddAsync(evente);
+                await _context.AddAsync(@event);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -58,9 +59,9 @@ namespace SportsCompetition.Controllers
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var evente = _mapper.Map<Event>(dto);
+                var @event = _mapper.Map<Event>(dto);
 
-                _context.Update(evente);
+                _context.Update(@event);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -80,14 +81,14 @@ namespace SportsCompetition.Controllers
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var evente = await _context.Event.FirstOrDefaultAsync(s => s.Id == id);
+                var @event = await _context.Event.FirstOrDefaultAsync(s => s.Id == id);
 
-                if (evente == null)
+                if (@event == null)
                 {
                     return NotFound();
                 }
 
-                _context.Remove(evente);
+                _context.Remove(@event);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();

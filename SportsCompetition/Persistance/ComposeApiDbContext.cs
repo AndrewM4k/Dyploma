@@ -30,7 +30,7 @@ namespace SportsCompetition.Persistance
                 .HasMany(e => e.Competitions)
                 .WithMany(c => c.Events)
                 .UsingEntity<EventCompetition>(
-                    eevent => eevent
+                    @event => @event
                         .HasOne<Competition>()
                         .WithMany(c => c.EventCompetitions)
                         .HasForeignKey(ec => ec.CompetitionId),
@@ -58,7 +58,7 @@ namespace SportsCompetition.Persistance
                 .HasMany(e => e.Employees)
                 .WithMany(e => e.Events)
                 .UsingEntity<EmployeeEvent>(
-                    eevent => eevent
+                    @event => @event
                         .HasOne<Employee>()
                         .WithMany(e => e.EmployeeEvents)
                         .HasForeignKey(ee => ee.EmployeeId),
@@ -72,7 +72,7 @@ namespace SportsCompetition.Persistance
                 .HasMany(e => e.Sportsmans)
                 .WithMany(e => e.Events)
                 .UsingEntity<EventSportsman>(
-            eevent => eevent
+            @event => @event
                         .HasOne<Sportsman>()
                         .WithMany(e => e.EventSportsmans)
                         .HasForeignKey(ee => ee.SportsmanId),
