@@ -25,5 +25,16 @@ namespace SportsCompetition.Services
             await _context.SaveChangesAsync();
             return streama;
         }
+
+        public async Task<SportsmanCompetition> CreationSportsmanCompetition(List<Sportsman> list)
+        {
+            var streama = new Streama();
+            streama.SportsmanCompetitions = list;
+            streama.EventId = @event.Id;
+            streama.Number = number;
+
+            await _context.SaveChangesAsync();
+            return streama;
+        }
     }
 }

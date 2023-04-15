@@ -11,18 +11,12 @@
         public string Password { get; set; }
         public DateTime Birthdate { get; set; }
  
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<Competition> Competitions { get; set; }
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
+
         public ICollection<SportsmanCompetition> SportsmanCompetitions { get; set; }
         
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<Event> Events { get; set; }
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
+
         public ICollection<EventSportsman> EventSportsmans { get; set; }
     }
 }

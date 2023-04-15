@@ -30,12 +30,14 @@ namespace SportsCompetition.Services
 
         public async Task<SportsmanCompetition> ChangeWeight(SportsmanCompetition sportsmanCompetition, int nextweight)
         {
-            sportsmanCompetition.Attempts.Last().Weihgt = nextweight;
+            var numberAttempt = sportsmanCompetition.CurrentAttempt;
+            var attempt = _context.Attempt.Select(a => a.SportsmanCompetition == sportsmanCompetition);
+  
 
             return sportsmanCompetition;
         }
 
-        public async Task<SportsmanCompetition> AttemptsResult(SportsmanCompetition sportsmanCompetition, int nextweight)
+        public async Task<SportsmanCompetition> AttemptsResult(SportsmanCompetition sportsmanCompetition)
         {
             sportsmanCompetition.Attempts.Last().Number += 1;
             return sportsmanCompetition;

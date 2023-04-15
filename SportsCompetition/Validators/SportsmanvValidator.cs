@@ -11,20 +11,25 @@ namespace SportsCompetition.Validators
         public SportsmanvValidator(ComposeApiDbContext context)
         {
             RuleFor(s => s.Gender)
-                ;
+                .Must(CheckValueGender);
 
             RuleFor(s => s.Password)
-                .NotEmpty();
+                .NotEmpty()
+                .MinimumLength(5);
 
             RuleFor(s => s.Email)
+                .EmailAddress();
+
+            RuleFor(s => s.Username)
                 .NotEmpty()
-                .Must(CheckValue);
+                .Must(CheckValueUsername)
+                .MinimumLength(5);
             _context = context;
         }
 
-        public bool CheckValue(string v)
+        public bool CheckValueUsername(string v)
         {
-            foreach (string item in _context.Sportsmans.Select(u => u.Email).ToList())
+            foreach (string item in _context.Sportsmans.Select(u => u.Username).ToList())
             {
                 if (v == item)
                 {
@@ -32,6 +37,20 @@ namespace SportsCompetition.Validators
                 }
             }
             return true;
+        }
+
+        public bool CheckValueGender(string v)
+        {
+            var genders = new List<string>() { "male", "female" };
+
+            foreach (string item in genders)
+            {
+                if (v == item)
+                { 
+                return true;
+                }
+            }
+            return false;
         }
     }
 }

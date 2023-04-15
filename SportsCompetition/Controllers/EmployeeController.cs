@@ -5,6 +5,8 @@ using SportsCompetition.Dtos;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using Microsoft.AspNetCore.Authorization;
+using System;
+using WebApplication1.Cache;
 
 namespace SportsCompetition.Controllers
 {
@@ -16,9 +18,11 @@ namespace SportsCompetition.Controllers
         private readonly ILogger<SportsmanController> _logger;
         private readonly ComposeApiDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cacheService;
 
-        public EmployeeController(ILogger<SportsmanController> logger, ComposeApiDbContext context, IMapper mapper)
+        public EmployeeController(ILogger<SportsmanController> logger, ComposeApiDbContext context, IMapper mapper, ICacheService cacheService)
         {
+            _cacheService = cacheService;
             _logger = logger;
             _context = context;
             _mapper = mapper;
@@ -27,11 +31,24 @@ namespace SportsCompetition.Controllers
         [HttpGet("readAllEmployees")]
         public async Task<IEnumerable<GetEmployeeDto>> Get()
         {
-            return _mapper.ProjectTo<GetEmployeeDto>(_context.Employees);
+            const string key = "all-employees";
+            var cached = _cacheService.GetValue<IEnumerable<GetEmployeeDto>>(key);
+
+            if (cached == null)
+            {
+                var actual = _mapper.ProjectTo<GetEmployeeDto>(_context.Employees);
+                if (actual.ToList().Count != 0)
+                {
+                    _cacheService.SetValue(key, actual);
+                }
+
+                return actual;
+            }
+            return cached;
         }
 
         [HttpPost("addSportsman")]
-        public async Task<ActionResult> AddSportsman(AddEmployeeDto dto)
+        public async Task<ActionResult> AddEmployees(AddEmployeeDto dto)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
@@ -53,7 +70,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpPut("updateEmployee")]
-        public async Task<ActionResult> UpdateSportsman(UpdateEmployeeDto dto)
+        public async Task<ActionResult> UpdateEmployee(UpdateEmployeeDto dto)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
@@ -75,7 +92,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpDelete("deleteEmployee/{id:Guid}")]
-        public async Task<ActionResult> DeleteSportsman(Guid id)
+        public async Task<ActionResult> DeleteEmployee(Guid id)
         {
             using var transaction = _context.Database.BeginTransaction();
             try

@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Dtos;
+using SportsCompetition.Models;
 using SportsCompetition.Persistance;
-using System.IO;
 
 namespace SportsCompetition.Controllers
 {
@@ -28,7 +28,7 @@ namespace SportsCompetition.Controllers
         [HttpGet("readAllStreams")]
         public async Task<IEnumerable<GetStreamDto>> Get()
         {
-            return _mapper.ProjectTo<GetStreamDto>(_context.Stream);
+            return _mapper.ProjectTo<GetStreamDto>(_context.Streams);
         }
 
         [HttpPost("addStream")]
@@ -37,7 +37,7 @@ namespace SportsCompetition.Controllers
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var stream = _mapper.Map<Stream>(dto);
+                var stream = _mapper.Map<Streama>(dto);
 
                 await _context.AddAsync(stream);
                 await _context.SaveChangesAsync();
@@ -59,7 +59,7 @@ namespace SportsCompetition.Controllers
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var stream = _mapper.Map<Stream>(dto);
+                var stream = _mapper.Map<Streama>(dto);
 
                 await _context.AddAsync(stream);
                 await _context.SaveChangesAsync();
@@ -81,7 +81,7 @@ namespace SportsCompetition.Controllers
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                var employee = await _context.Stream.FirstOrDefaultAsync(e => e.Id == id);
+                var employee = await _context.Streams.FirstOrDefaultAsync(e => e.Id == id);
 
                 if (employee == null)
                 {

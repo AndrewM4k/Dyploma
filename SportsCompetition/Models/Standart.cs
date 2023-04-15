@@ -9,12 +9,8 @@
         public string Category { get; set; }
         public string StandartResult { get; set; }
 
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<Competition> Competitions { get; set; }
 
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
         public ICollection<CompetitionStandart> CompetitionStandarts { get; set; }
     }
 }

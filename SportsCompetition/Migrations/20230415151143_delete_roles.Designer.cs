@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportsCompetition.Persistance;
 
@@ -11,9 +12,10 @@ using SportsCompetition.Persistance;
 namespace SportsCompetition.Migrations
 {
     [DbContext(typeof(ComposeApiDbContext))]
-    partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230415151143_delete_roles")]
+    partial class delete_roles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,9 +119,6 @@ namespace SportsCompetition.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -129,8 +128,6 @@ namespace SportsCompetition.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Employees");
                 });
@@ -416,17 +413,6 @@ namespace SportsCompetition.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SportsCompetition.Models.Employee", b =>
-                {
-                    b.HasOne("SportsCompetition.Models.Role", "Role")
-                        .WithMany("Employees")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("SportsCompetition.Models.EmployeeEvent", b =>
                 {
                     b.HasOne("SportsCompetition.Models.Employee", null)
@@ -536,11 +522,6 @@ namespace SportsCompetition.Migrations
             modelBuilder.Entity("SportsCompetition.Models.Record", b =>
                 {
                     b.Navigation("CompetitionRecords");
-                });
-
-            modelBuilder.Entity("SportsCompetition.Models.Role", b =>
-                {
-                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Sportsman", b =>

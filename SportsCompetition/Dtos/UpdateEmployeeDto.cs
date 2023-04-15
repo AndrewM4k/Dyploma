@@ -1,4 +1,6 @@
-﻿namespace SportsCompetition.Dtos
+﻿using SportsCompetition.Models;
+
+namespace SportsCompetition.Dtos
 {
     public class UpdateEmployeeDto
     {

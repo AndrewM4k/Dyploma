@@ -4,7 +4,6 @@ namespace SportsCompetition.Models
 {
     public class Streama
     {
-        [Key]
         public Guid Id { get; set; }
         public Guid EventId { get; set; }
         public Event Event { get; set; }

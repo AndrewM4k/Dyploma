@@ -12,8 +12,9 @@ namespace SportsCompetition.Persistance
         public DbSet<Standart> Standart { get; set; }
         public DbSet<Competition> Competition { get; set; }
         public DbSet<Models.SportsmanCompetition> SportsmanCompetition { get; set; }
-        public DbSet<Streama> Stream { get; set; }
+        public DbSet<Streama> Streams { get; set; }
         public DbSet<Attempt> Attempt { get; set; }
+        public DbSet<Role> Role { get; set; }
 
         public ComposeApiDbContext(DbContextOptions<ComposeApiDbContext> options)
             : base(options)

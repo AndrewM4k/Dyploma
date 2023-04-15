@@ -8,6 +8,9 @@ using AutoMapper;
 using Microsoft.OpenApi.Models;
 using AutorisationApi.Services;
 using AutorisationApi.Extensions;
+using SportsCompetition.Services;
+using WebApplication1.Cache;
+using StackExchange.Redis;
 
 namespace SportsCompetition
 {
@@ -19,11 +22,23 @@ namespace SportsCompetition
 
             // Add services to the container.
             builder.Services.AddIdentityServices(builder.Configuration);
+            builder.Services.AddScoped<StreamService>();
+            builder.Services.AddScoped<SecretaryService>();
+            builder.Services.AddScoped<EventService>();
+            builder.Services.AddScoped<SportsmanCompetitionService>();
             builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<ICacheService, RedisCacheService>();
+
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
             builder.Services.AddDbContext<ComposeApiDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(
+                    builder.Configuration.GetConnectionString("Redis")));
+
+            builder.Services.AddMemoryCache();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -55,6 +70,7 @@ namespace SportsCompetition
             });
 
             var app = builder.Build();
+            app.Services.SeedDataContext();
 
             await app.Services.ApplyMigarationForDbContext<ComposeApiDbContext>();
 

@@ -19,6 +19,7 @@ namespace SportsCompetition.Services
         public async Task<Event> CreationEvent(Event @event, List<Streama> list)
         {
             @event.Shedule = list;
+            @event.CurrentStream = list.First().Id;
 
             await _context.SaveChangesAsync();
             return @event;
@@ -30,13 +31,18 @@ namespace SportsCompetition.Services
             {
                 foreach (var item2 in item1.SportsmanCompetitions)
                 {
-                    int nextweight = 0;
                     SportsmanCompetition sportsmanCompetition = item2;
-                    await _sportsmancompetitionservice.AttemptsResult(sportsmanCompetition, nextweight);
+                    await _sportsmancompetitionservice.AttemptsResult(sportsmanCompetition);
                 }
                 await _context.SaveChangesAsync();
             }
             await _context.SaveChangesAsync();
+            return @event;
+        }
+
+        public async Task<int> SetWeight(SportsmanCompetition sportsmanCompetition, int attemptNumber, int weight)
+        {
+            sportsmanCompetition.Attempts.num
             return @event;
         }
     }
