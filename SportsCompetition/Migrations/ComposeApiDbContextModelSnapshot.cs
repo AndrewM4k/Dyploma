@@ -10,7 +10,7 @@ using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Migrations
 {
-    [DbContext(typeof(ComposeApiDbContext))]
+    [DbContext(typeof(SportCompetitionDbContext))]
     partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("SportsmanCompetitionCompetitionId", "SportsmanCompetitionSportsmanId");
 
-                    b.ToTable("Attempt");
+                    b.ToTable("Attempt", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Competition", b =>
@@ -70,7 +70,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Competition");
+                    b.ToTable("Competition", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.CompetitionRecord", b =>
@@ -85,7 +85,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("RecordId");
 
-                    b.ToTable("CompetitionRecord");
+                    b.ToTable("CompetitionRecord", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.CompetitionStandart", b =>
@@ -100,7 +100,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("StandartId");
 
-                    b.ToTable("CompetitionStandart");
+                    b.ToTable("CompetitionStandart", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Employee", b =>
@@ -132,7 +132,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.EmployeeEvent", b =>
@@ -147,7 +147,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EmployeeEvent");
+                    b.ToTable("EmployeeEvent", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Event", b =>
@@ -172,7 +172,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Event");
+                    b.ToTable("Event", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.EventCompetition", b =>
@@ -187,7 +187,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventCompetition");
+                    b.ToTable("EventCompetition", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.EventSportsman", b =>
@@ -205,7 +205,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("SportsmanId");
 
-                    b.ToTable("EventSportsman");
+                    b.ToTable("EventSportsman", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Record", b =>
@@ -236,7 +236,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Record");
+                    b.ToTable("Record", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Role", b =>
@@ -257,7 +257,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Role");
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Sportsman", b =>
@@ -295,7 +295,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sportsmans");
+                    b.ToTable("Sportsmans", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.SportsmanCompetition", b =>
@@ -349,7 +349,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Standart");
+                    b.ToTable("Standart", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Streama", b =>
@@ -372,7 +372,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Streams");
+                    b.ToTable("Streams", (string)null);
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Attempt", b =>

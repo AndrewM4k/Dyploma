@@ -1,16 +1,15 @@
 using ApiWithEF.Common;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Helpers;
-using SportsCompetition.Persistance;
-using System.Net.NetworkInformation;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using AutoMapper;
 using Microsoft.OpenApi.Models;
 using AutorisationApi.Services;
-using AutorisationApi.Extensions;
 using SportsCompetition.Services;
 using WebApplication1.Cache;
 using StackExchange.Redis;
+using SportsCompetition.Extencions;
+using Microsoft.AspNetCore.Identity;
+using SportsCompetition.Models;
+using SportsCompetition.Persistance;
 
 namespace SportsCompetition
 {
@@ -21,17 +20,24 @@ namespace SportsCompetition
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddIdentityServices(builder.Configuration);
+            //builder.Services.AddIdentityServices(builder.Configuration);
+
             builder.Services.AddScoped<StreamService>();
             builder.Services.AddScoped<SecretaryService>();
             builder.Services.AddScoped<EventService>();
+            builder.Services.AddScoped<EmployeeService>();
+            builder.Services.AddScoped<SportsmanService>();
             builder.Services.AddScoped<SportsmanCompetitionService>();
+
+            builder.Services.AddIdentityservicer(builder.Configuration);
             builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<RefreshTokenService>();
+
             builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
-            builder.Services.AddDbContext<ComposeApiDbContext>(options =>
+            builder.Services.AddDbContext<SportCompetitionDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddSingleton<IConnectionMultiplexer>(
@@ -39,6 +45,11 @@ namespace SportsCompetition
                     builder.Configuration.GetConnectionString("Redis")));
 
             builder.Services.AddMemoryCache();
+
+            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<SportCompetitionDbContext>()
+                .AddDefaultTokenProviders();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -67,12 +78,14 @@ namespace SportsCompetition
                         Array.Empty<string>()
                     }
                 });
-            });
+            }
+            );
 
             var app = builder.Build();
-            app.Services.SeedDataContext();
 
-            await app.Services.ApplyMigarationForDbContext<ComposeApiDbContext>();
+            await app.Services.ApplyMigarationForDbContext<SportCompetitionDbContext>();
+
+            await app.Services.SeedDataContext();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

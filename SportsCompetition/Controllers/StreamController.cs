@@ -15,10 +15,10 @@ namespace SportsCompetition.Controllers
     public class StreamController : ControllerBase
     {
         private readonly ILogger<StreamController> _logger;
-        private readonly ComposeApiDbContext _context;
+        private readonly SportCompetitionDbContext _context;
         private readonly IMapper _mapper;
 
-        public StreamController(ILogger<StreamController> logger, ComposeApiDbContext context, IMapper mapper)
+        public StreamController(ILogger<StreamController> logger, SportCompetitionDbContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;

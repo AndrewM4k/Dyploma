@@ -11,7 +11,7 @@ using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Migrations
 {
-    [DbContext(typeof(ComposeApiDbContext))]
+    [DbContext(typeof(SportCompetitionDbContext))]
     [Migration("20230408170125_Added_Streama")]
     partial class Added_Streama
     {

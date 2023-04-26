@@ -11,7 +11,7 @@ using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Migrations
 {
-    [DbContext(typeof(ComposeApiDbContext))]
+    [DbContext(typeof(SportCompetitionDbContext))]
     [Migration("20230408142555_DB_Changes")]
     partial class DB_Changes
     {

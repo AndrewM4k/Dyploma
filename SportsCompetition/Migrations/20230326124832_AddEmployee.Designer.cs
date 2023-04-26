@@ -11,7 +11,7 @@ using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Migrations
 {
-    [DbContext(typeof(ComposeApiDbContext))]
+    [DbContext(typeof(SportCompetitionDbContext))]
     [Migration("20230326124832_AddEmployee")]
     partial class AddEmployee
     {

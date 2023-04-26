@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using SportsCompetition.Dtos;
+using SportsCompetition.Enums;
 using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Validators
@@ -7,11 +8,11 @@ namespace SportsCompetition.Validators
     public class SportsmanvValidator : AbstractValidator<AddSportsmanDto>
     {
 
-        private readonly ComposeApiDbContext _context;
-        public SportsmanvValidator(ComposeApiDbContext context)
+        private readonly SportCompetitionDbContext _context;
+        public SportsmanvValidator(SportCompetitionDbContext context)
         {
             RuleFor(s => s.Gender)
-                .Must(CheckValueGender);
+                .IsInEnum();
 
             RuleFor(s => s.Password)
                 .NotEmpty()
@@ -20,23 +21,10 @@ namespace SportsCompetition.Validators
             RuleFor(s => s.Email)
                 .EmailAddress();
 
-            RuleFor(s => s.Username)
+            RuleFor(s => s.Name)
                 .NotEmpty()
-                .Must(CheckValueUsername)
-                .MinimumLength(5);
+                .MinimumLength(2);
             _context = context;
-        }
-
-        public bool CheckValueUsername(string v)
-        {
-            foreach (string item in _context.Sportsmans.Select(u => u.Username).ToList())
-            {
-                if (v == item)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         public bool CheckValueGender(string v)

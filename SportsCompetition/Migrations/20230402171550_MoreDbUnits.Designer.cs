@@ -11,7 +11,7 @@ using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Migrations
 {
-    [DbContext(typeof(ComposeApiDbContext))]
+    [DbContext(typeof(SportCompetitionDbContext))]
     [Migration("20230402171550_MoreDbUnits")]
     partial class MoreDbUnits
     {

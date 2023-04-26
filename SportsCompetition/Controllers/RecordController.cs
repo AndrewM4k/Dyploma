@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Dtos;
 using SportsCompetition.Models;
-using SportsCompetition.Persistance;
 using Microsoft.AspNetCore.Authorization;
+using SportsCompetition.Persistance;
+using SportsCompetition.Services;
 
 namespace SportsCompetition.Controllers
 {
@@ -15,91 +16,46 @@ namespace SportsCompetition.Controllers
     {
 
         private readonly ILogger<RecordController> _logger;
-        private readonly ComposeApiDbContext _context;
+        private readonly SportCompetitionDbContext _context;
         private readonly IMapper _mapper;
+        private readonly RecordService _recordService;
 
-        public RecordController(ILogger<RecordController> logger, ComposeApiDbContext context, IMapper mapper)
+
+        public RecordController(ILogger<RecordController> logger, SportCompetitionDbContext context, IMapper mapper, RecordService recordService)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _recordService = recordService;
         }
 
         [HttpGet("readAllRecords")]
         public async Task<IEnumerable<GetRecordDto>> Get()
         {
-            return _mapper.ProjectTo<GetRecordDto>(_context.Record);
+            return _mapper.ProjectTo<GetRecordDto>(await _recordService.GetAllRecords());
         }
 
         [HttpPost("addRecord")]
         public async Task<ActionResult> AddRecord(AddRecordDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var record = _mapper.Map<Record>(dto);
-
-                await _context.AddAsync(record);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            var record = _mapper.Map<Record>(dto);
+            _recordService.AddRecord(record);
+            return Ok();
         }
 
         [HttpPut("updateRecord")]
-        public async Task<ActionResult> UpdateSportsman(UpdateRecordDto dto)
+        public async Task<ActionResult> UpdateRecord(UpdateRecordDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var record = _mapper.Map<Record>(dto);
-
-                _context.Update(record);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            var record = _mapper.Map<Record>(dto);
+            _recordService.UpdateRecord(record);
+            return Ok();
         }
 
         [HttpDelete("deleteRecord/{id:Guid}")]
         public async Task<ActionResult> DeleteRecord(Guid id)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var record = await _context.Record.FirstOrDefaultAsync(s => s.Id == id);
-
-                if (record == null)
-                {
-                    return NotFound();
-                }
-
-                _context.Remove(record);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            _recordService.DeleteRecord(id);
+            return Ok();
         }
     }
 }

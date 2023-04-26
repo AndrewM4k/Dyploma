@@ -11,7 +11,7 @@ using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Migrations
 {
-    [DbContext(typeof(ComposeApiDbContext))]
+    [DbContext(typeof(SportCompetitionDbContext))]
     [Migration("20230415151259_add_roles_back")]
     partial class add_roles_back
     {

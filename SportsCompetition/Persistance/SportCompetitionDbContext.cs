@@ -1,27 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SportsCompetition.Enums;
 using SportsCompetition.Models;
 
 namespace SportsCompetition.Persistance
 {
-    public class ComposeApiDbContext : DbContext
+    public class SportCompetitionDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Sportsman> Sportsmans { get; set; }
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Models.Employee> Employees { get; set; }
         public DbSet<Event> Event { get; set; }
         public DbSet<Record> Record { get; set; }
         public DbSet<Standart> Standart { get; set; }
         public DbSet<Competition> Competition { get; set; }
-        public DbSet<Models.SportsmanCompetition> SportsmanCompetition { get; set; }
+        public DbSet<SportsmanCompetition> SportsmanCompetition { get; set; }
         public DbSet<Streama> Streams { get; set; }
         public DbSet<Attempt> Attempt { get; set; }
-        public DbSet<Role> Role { get; set; }
 
-        public ComposeApiDbContext(DbContextOptions<ComposeApiDbContext> options)
+        public SportCompetitionDbContext(DbContextOptions<SportCompetitionDbContext> options)
             : base(options)
         { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<SportsmanCompetition>()
@@ -55,12 +60,16 @@ namespace SportsCompetition.Persistance
                         .HasForeignKey(sc => sc.SportsmanId)
                     );
 
+            modelBuilder.Entity<Sportsman>()
+                .Property(s => s.Gender)
+                .HasConversion(new EnumToStringConverter<Gender>());
+
             modelBuilder.Entity<Event>()
                 .HasMany(e => e.Employees)
                 .WithMany(e => e.Events)
                 .UsingEntity<EmployeeEvent>(
                     @event => @event
-                        .HasOne<Employee>()
+                        .HasOne<Models.Employee>()
                         .WithMany(e => e.EmployeeEvents)
                         .HasForeignKey(ee => ee.EmployeeId),
                     competition => competition
@@ -97,11 +106,15 @@ namespace SportsCompetition.Persistance
                        .HasForeignKey(s => s.CompetitionId)
                    );
 
+            modelBuilder.Entity<Standart>()
+                .Property(s => s.Gender)
+                .HasConversion(new EnumToStringConverter<Gender>());
+
             modelBuilder.Entity<Competition>()
                .HasMany(e => e.Records)
                .WithMany(e => e.Competitions)
                .UsingEntity<CompetitionRecord>(
-           competition => competition
+                   competition => competition
                        .HasOne<Record>()
                        .WithMany(c => c.CompetitionRecords)
                        .HasForeignKey(c => c.RecordId),
@@ -111,21 +124,43 @@ namespace SportsCompetition.Persistance
                        .HasForeignKey(s => s.CompetitionId)
                    );
 
-            modelBuilder.Entity<Role>()
-                .HasMany(s => s.Employees)
-                .WithOne(o => o.Role);
+            modelBuilder.Entity<Record>()
+                .Property(s => s.Gender)
+                .HasConversion(new EnumToStringConverter<Gender>());
 
             modelBuilder.Entity<SportsmanCompetition>()
                 .HasMany(s => s.Attempts)
-                .WithOne(a =>a.SportsmanCompetition);
+                .WithOne(a => a.SportsmanCompetition);
 
             modelBuilder.Entity<Streama>()
                 .HasMany(s => s.SportsmanCompetitions)
                 .WithOne(o => o.Stream);
 
+            modelBuilder.Entity<Streama>()
+               .HasMany(s => s.Employees)
+               .WithMany(e => e.Streams)
+               .UsingEntity<StreamJudgeEmployee>(
+                   employee => employee
+                       .HasOne<Employee>()
+                       .WithMany(e => e.StreamJudgeEmployees)
+                       .HasForeignKey(c => c.StreamId),
+                   stream => stream
+                       .HasOne<Streama>()
+                       .WithMany(s => s.StreamJudgeEmployees)
+                       .HasForeignKey(s => s.EmployeeId)
+                   );
+
             modelBuilder.Entity<Event>()
                 .HasMany(s => s.Shedule)
                 .WithOne(o => o.Event);
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasKey(t => new { t.UserId, t.Token });
+
+            modelBuilder.Entity<User>()
+                .HasOne(e => e.Employee)
+                .WithOne(u => u.User)
+                .HasForeignKey<Employee>(u => u.UserId);
         }
     }
 }

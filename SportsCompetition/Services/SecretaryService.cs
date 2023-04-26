@@ -6,9 +6,9 @@ namespace SportsCompetition.Services
     {
         private readonly SportsmanCompetitionService _sportsmancompetitionservice;
         private readonly ILogger<EventService> _logger;
-        private readonly ComposeApiDbContext _context;
+        private readonly SportCompetitionDbContext _context;
 
-        public SecretaryService(ILogger<EventService> logger, ComposeApiDbContext context, SportsmanCompetitionService sportsmancompetitionservice)
+        public SecretaryService(ILogger<EventService> logger, SportCompetitionDbContext context, SportsmanCompetitionService sportsmancompetitionservice)
         {
             _logger = logger;
             _context = context;

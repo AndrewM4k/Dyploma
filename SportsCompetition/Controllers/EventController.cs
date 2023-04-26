@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Dtos;
 using SportsCompetition.Models;
-using SportsCompetition.Persistance;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using SportsCompetition.Services;
+using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Controllers
 {
@@ -15,10 +16,11 @@ namespace SportsCompetition.Controllers
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
-        private readonly ComposeApiDbContext _context;
+        private readonly SportCompetitionDbContext _context;
         private readonly IMapper _mapper;
+        private readonly EventService _eventService;
 
-        public EventController(ILogger<EventController> logger, ComposeApiDbContext context, IMapper mapper)
+        public EventController(ILogger<EventController> logger, SportCompetitionDbContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
@@ -28,78 +30,32 @@ namespace SportsCompetition.Controllers
         [HttpGet("readAllEvents")]
         public async Task<IEnumerable<GetEventDto>> Get()
         {
-            return _mapper.ProjectTo<GetEventDto>(_context.Event);
+            return _mapper.ProjectTo<GetEventDto>(await _eventService.GetEventsAsync());
         }
 
         [HttpPost("addEvent")]
         public async Task<ActionResult> AddEvent(AddEventDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var @event = _mapper.Map<Event>(dto);
+            var @event = _mapper.Map<Event>(dto);
+            await _eventService.AddEvent(@event);
 
-                await _context.AddAsync(@event);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            return Ok();
         }
 
         [HttpPut("updateEvent")]
         public async Task<ActionResult> UpdateEvent(UpdateEventDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var @event = _mapper.Map<Event>(dto);
+            var @event = _mapper.Map<Event>(dto);
+            await _eventService.UpdateEvent(@event);
 
-                _context.Update(@event);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            return Ok();
         }
 
         [HttpDelete("deleteEvent/{id:Guid}")]
         public async Task<ActionResult> DeleteEvent(Guid id)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var @event = await _context.Event.FirstOrDefaultAsync(s => s.Id == id);
-
-                if (@event == null)
-                {
-                    return NotFound();
-                }
-
-                _context.Remove(@event);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            await _eventService.DeleteEvent(id);
+            return Ok();
         }
     }
 }

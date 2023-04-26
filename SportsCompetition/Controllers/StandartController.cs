@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Dtos;
 using SportsCompetition.Models;
-using SportsCompetition.Persistance;
 using Microsoft.AspNetCore.Authorization;
+using SportsCompetition.Persistance;
+using SportsCompetition.Services;
 
 namespace SportsCompetition.Controllers
 {
@@ -14,91 +15,45 @@ namespace SportsCompetition.Controllers
     public class StandartController : ControllerBase
     {
         private readonly ILogger<StandartController> _logger;
-        private readonly ComposeApiDbContext _context;
+        private readonly SportCompetitionDbContext _context;
         private readonly IMapper _mapper;
+        private readonly StandartService _standartService;
 
-        public StandartController(ILogger<StandartController> logger, ComposeApiDbContext context, IMapper mapper)
+        public StandartController(ILogger<StandartController> logger, SportCompetitionDbContext context, IMapper mapper, StandartService standartService)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _standartService = standartService;
         }
 
         [HttpGet("readAllStandarts")]
         public async Task<IEnumerable<GetStandartDto>> Get()
         {
-            return _mapper.ProjectTo<GetStandartDto>(_context.Standart);
+            return _mapper.ProjectTo<GetStandartDto>(await _standartService.GetAllStandarts());
         }
 
         [HttpPost("addStandart")]
         public async Task<ActionResult> AddStandart(AddStandartDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var standart = _mapper.Map<Standart>(dto);
-
-                await _context.AddAsync(standart);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            var standart = _mapper.Map<Standart>(dto);
+            _standartService.AddStandart(standart);
+            return Ok();
         }
 
         [HttpPut("updateStandart")]
-        public async Task<ActionResult> UpdateSportsman(UpdateStandartDto dto)
+        public async Task<ActionResult> UpdateStandart(UpdateStandartDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var standart = _mapper.Map<Standart>(dto);
-
-                _context.Update(standart);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            var standart = _mapper.Map<Standart>(dto);
+            _standartService.UpdateStandart(standart);
+            return Ok();
         }
 
         [HttpDelete("deleteStandart/{id:Guid}")]
         public async Task<ActionResult> DeleteStandart(Guid id)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var standart = await _context.Standart.FirstOrDefaultAsync(s => s.Id == id);
-
-                if (standart == null)
-                {
-                    return NotFound();
-                }
-
-                _context.Remove(standart);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            _standartService.DeleteStandart(id);
+            return Ok();
         }
     }
 }

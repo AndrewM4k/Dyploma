@@ -1,6 +1,4 @@
-﻿using SportsCompetition.Controllers;
-using SportsCompetition.Dtos;
-using SportsCompetition.Models;
+﻿using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 
 namespace SportsCompetition.Services
@@ -8,9 +6,9 @@ namespace SportsCompetition.Services
     public class SportsmanCompetitionService
     {
         private readonly ILogger<SportsmanCompetitionService> _logger;
-        private readonly ComposeApiDbContext _context;
+        private readonly SportCompetitionDbContext _context;
 
-        public SportsmanCompetitionService(ILogger<SportsmanCompetitionService> logger, ComposeApiDbContext context)
+        public SportsmanCompetitionService(ILogger<SportsmanCompetitionService> logger, SportCompetitionDbContext context)
         {
             _logger = logger;
             _context = context;

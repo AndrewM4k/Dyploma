@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SportsCompetition.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -9,16 +10,16 @@ namespace AutorisationApi.Services
     {
         private readonly SymmetricSecurityKey _key;
         public TokenService(IConfiguration configuration)
-        {
-            var a = configuration["TokenSignKey"];
+        { 
             _key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(a));
+                Encoding.UTF8.GetBytes(configuration["TokenSecret"]));
         }
-        public string CreateToken(string username)
+        public string CreateToken(User user)
         {
             var claims = new List<Claim>()
             {
-                new (JwtRegisteredClaimNames.NameId, username)
+                new (JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                new (JwtRegisteredClaimNames.UniqueName, user.UserName),
             };
 
             var creds = new SigningCredentials(_key,
