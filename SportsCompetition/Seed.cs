@@ -1,13 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using SportsCompetition.Enums;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
-using StackExchange.Redis;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace SportsCompetition
 {
@@ -19,9 +12,9 @@ namespace SportsCompetition
             {
                 var context = scope.ServiceProvider.GetRequiredService<SportCompetitionDbContext>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-                context.Database.Migrate();
+                //context.Database.Migrate();
 
                 if (!roleManager.Roles.Any())
                 {
@@ -92,15 +85,15 @@ namespace SportsCompetition
                         }
 
                     };
-                    context.Employees.AddRange(employees);
-                    context.SaveChanges();
 
                     foreach (var employee in employees)
                     {
-                        await userManager.CreateAsync(employee.User, "Password_04${employee.Name}");
+                        await userManager.CreateAsync(employee.User, $"Password_04${employee.Name}");
                         await userManager.AddToRoleAsync(employee.User, employee.Role.ToString());
-                    } 
-                    
+                    }
+
+                    context.Employees.AddRange(employees);
+                    context.SaveChanges();
                 };
                 if (!context.Competition.Any())
                 {
