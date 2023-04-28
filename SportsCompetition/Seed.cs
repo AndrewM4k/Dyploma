@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using SportsCompetition.Enums;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using StackExchange.Redis;
@@ -39,68 +36,91 @@ namespace SportsCompetition
                     }
                 };
 
+                //if (role.Name == "Adminisrator")
+                //{
+                //       var user = new User()
+                //       {
+                //            Email = "andrey.mar4uk2011@yandex.ru",
+                //            EmailConfirmed = true,
+                //            UserName = "Adminisrator",
+                //            NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
+                //       };
+
+
+                //await userManager.CreateAsync(user,
+                //    $"{{u2w]B&kz;{role.Name}");
+
                 if (!context.Employees.Any())
                 {
+                    await userManager.CreateAsync(new User()
+                    {
+                        Email = "andrey.mar4uk2011@yandex.ru",
+                        EmailConfirmed = true,
+                        UserName = "Adminisrator",
+                        NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
+                    },
+                            $"{{u2w]B&kz;Adminisrator");
+
+                    await userManager.CreateAsync(new User()
+                    {
+                        UserName = "Judge",
+                        NormalizedUserName = "JUDJE"
+                    },
+                            $"{{u2w]B&kz;Judge");
+
+                    await userManager.CreateAsync(new User()
+                    {
+                        UserName = "Secretary",
+                        NormalizedUserName = "SECRETARY"
+                    },
+                            $"{{u2w]B&kz;Secretary");
+
+                    await userManager.CreateAsync(new User()
+                    {
+                        UserName = "Assistant",
+                        NormalizedUserName = "ASSISTANT"
+                    },
+                            $"{{u2w]B&kz;Assistant");
+
                     var employees = new List<Employee>()
                     {
                         new Employee()
                         {
                             Name = "Judge",
                             Surname = "Judge",
-                            User = new User()
-                            {
-                                UserName = "Judge_01",
-                                NormalizedUserName = "JUDGE_01"
-                            },
-                            Role = Enums.Role.Judge
-
+                            Role = Enums.Role.Judge,
+                            User = context.Users.FirstOrDefault(u=>u.UserName == "Judge")
                         },
                         new Employee()
                         {
                             Name = "Secretary",
                             Surname = "Secretary",
-                            User = new User()
-                            {
-                                UserName = "Secretary_01",
-                                NormalizedUserName = "SECRETARY_01"
-                            },
-                            Role = Enums.Role.Secretary
+                            Role = Enums.Role.Secretary,
+                            User = context.Users.FirstOrDefault(u=>u.UserName == "Secretary")
                         },
                         new Employee()
                         {
                             Name = "Assistant",
                             Surname = "Assistant",
-                            User = new User()
-                            {
-                                UserName = "Assistant_01",
-                                NormalizedUserName = "ASSISTANT_01"
-                            },
-                            Role = Enums.Role.Assistant
+                            Role = Enums.Role.Assistant,
+                            User = context.Users.FirstOrDefault(u=>u.UserName == "Assistant")
                         },
                         new Employee()
                         {
                             Name = "Adminisrator",
                             Surname = "Adminisrator",
-                            User = new User()
-                            {
-                                Email = "andrey.mar4uk2011@yandex.ru",
-                                EmailConfirmed = true,
-                                UserName = "andrey.mar4uk2011@yandex.ru",
-                                NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
-                            },
-                            Role = Enums.Role.Administrator
+                            Role = Enums.Role.Administrator,
+                            User = context.Users.FirstOrDefault(u=>u.UserName == "Adminisrator")
                         }
-
                     };
+                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Judge"), "Judge");
+                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Adminisrator"), "Adminisrator");
+                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Assistant"), "Assistant");
+                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Secretary"), "Secretary");
+
                     context.Employees.AddRange(employees);
                     context.SaveChanges();
 
-                    foreach (var employee in employees)
-                    {
-                        await userManager.CreateAsync(employee.User, "Password_04${employee.Name}");
-                        await userManager.AddToRoleAsync(employee.User, employee.Role.ToString());
-                    } 
-                    
                 };
                 if (!context.Competition.Any())
                 {

@@ -47,6 +47,7 @@ namespace SportsCompetition
             builder.Services.AddMemoryCache();
 
             builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<SportCompetitionDbContext>()
                 .AddDefaultTokenProviders();
 
