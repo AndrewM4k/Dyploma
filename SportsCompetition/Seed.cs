@@ -14,8 +14,6 @@ namespace SportsCompetition
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-                //context.Database.Migrate();
-
                 if (!roleManager.Roles.Any())
                 {
                     var roles = new List<IdentityRole<Guid>>()
@@ -30,7 +28,7 @@ namespace SportsCompetition
                     {
                         await roleManager.CreateAsync(item);
                     }
-                };
+                }
 
                 if (!context.Employees.Any())
                 {
@@ -94,7 +92,8 @@ namespace SportsCompetition
 
                     context.Employees.AddRange(employees);
                     context.SaveChanges();
-                };
+                }
+
                 if (!context.Competition.Any())
                 {
                     var competitions = new List<Competition>()
@@ -118,7 +117,7 @@ namespace SportsCompetition
 
                     context.Competition.AddRange(competitions);
                     context.SaveChanges();
-                };
+                }
             }
         }
     }

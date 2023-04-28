@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportsCompetition.Persistance;
 
@@ -11,9 +12,10 @@ using SportsCompetition.Persistance;
 namespace SportsCompetition.Migrations
 {
     [DbContext(typeof(SportCompetitionDbContext))]
-    partial class ComposeApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230428161859_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
