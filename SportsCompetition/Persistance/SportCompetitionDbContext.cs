@@ -11,7 +11,7 @@ namespace SportsCompetition.Persistance
     {
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Sportsman> Sportsmans { get; set; }
-        public DbSet<Models.Employee> Employees { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         public DbSet<Event> Event { get; set; }
         public DbSet<Record> Record { get; set; }
         public DbSet<Standart> Standart { get; set; }
