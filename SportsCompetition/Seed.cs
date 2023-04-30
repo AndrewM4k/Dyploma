@@ -2,9 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
-using StackExchange.Redis;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace SportsCompetition
 {
@@ -16,9 +13,7 @@ namespace SportsCompetition
             {
                 var context = scope.ServiceProvider.GetRequiredService<SportCompetitionDbContext>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
-
-                context.Database.Migrate();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
                 if (!roleManager.Roles.Any())
                 {
@@ -34,7 +29,7 @@ namespace SportsCompetition
                     {
                         await roleManager.CreateAsync(item);
                     }
-                };
+                }
 
                 //if (role.Name == "Adminisrator")
                 //{
@@ -113,15 +108,17 @@ namespace SportsCompetition
                             User = context.Users.FirstOrDefault(u=>u.UserName == "Adminisrator")
                         }
                     };
-                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Judge"), "Judge");
-                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Adminisrator"), "Adminisrator");
-                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Assistant"), "Assistant");
-                    await userManager.AddToRoleAsync(context.Users.FirstOrDefault(u => u.UserName == "Secretary"), "Secretary");
+
+                    foreach (var employee in employees)
+                    {
+                        await userManager.CreateAsync(employee.User, $"Password_04${employee.Name}");
+                        await userManager.AddToRoleAsync(employee.User, employee.Role.ToString());
+                    }
 
                     context.Employees.AddRange(employees);
                     context.SaveChanges();
-
-                };
+                }
+                
                 if (!context.Competition.Any())
                 {
                     var competitions = new List<Competition>()
@@ -145,7 +142,7 @@ namespace SportsCompetition
 
                     context.Competition.AddRange(competitions);
                     context.SaveChanges();
-                };
+                }
             }
         }
     }

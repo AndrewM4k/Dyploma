@@ -17,7 +17,11 @@ namespace SportsCompetition.Extencions
                 opt.Password.RequireNonAlphanumeric = true;
                 opt.Password.RequiredLength = 10;
             })
+                .AddRoles<IdentityRole<Guid>>()
+                .AddRoleManager<RoleManager<IdentityRole<Guid>>>()
+                .AddUserManager<UserManager<User>>()
                 .AddSignInManager<SignInManager<User>>()
+                .AddRoleValidator<RoleValidator<IdentityRole<Guid>>>()
                 .AddEntityFrameworkStores<SportCompetitionDbContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

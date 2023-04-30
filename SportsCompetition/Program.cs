@@ -46,11 +46,6 @@ namespace SportsCompetition
 
             builder.Services.AddMemoryCache();
 
-            builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-                .AddRoles<IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<SportCompetitionDbContext>()
-                .AddDefaultTokenProviders();
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

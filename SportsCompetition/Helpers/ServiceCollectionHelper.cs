@@ -8,7 +8,7 @@ namespace SportsCompetition.Helpers
         {
             using var scope = services.CreateScope();
             var context = scope.ServiceProvider.GetService<T>();
-            DbContextHelper.ApplyMigrations(context);
+            await DbContextHelper.ApplyMigrations(context);
         }
     }
 }
