@@ -47,36 +47,6 @@ namespace SportsCompetition
 
                 if (!context.Employees.Any())
                 {
-                    await userManager.CreateAsync(new User()
-                    {
-                        Email = "andrey.mar4uk2011@yandex.ru",
-                        EmailConfirmed = true,
-                        UserName = "Adminisrator",
-                        NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
-                    },
-                            $"{{u2w]B&kz;Adminisrator");
-
-                    await userManager.CreateAsync(new User()
-                    {
-                        UserName = "Judge",
-                        NormalizedUserName = "JUDJE"
-                    },
-                            $"{{u2w]B&kz;Judge");
-
-                    await userManager.CreateAsync(new User()
-                    {
-                        UserName = "Secretary",
-                        NormalizedUserName = "SECRETARY"
-                    },
-                            $"{{u2w]B&kz;Secretary");
-
-                    await userManager.CreateAsync(new User()
-                    {
-                        UserName = "Assistant",
-                        NormalizedUserName = "ASSISTANT"
-                    },
-                            $"{{u2w]B&kz;Assistant");
-
                     var employees = new List<Employee>()
                     {
                         new Employee()
@@ -84,28 +54,46 @@ namespace SportsCompetition
                             Name = "Judge",
                             Surname = "Judge",
                             Role = Enums.Role.Judge,
-                            User = context.Users.FirstOrDefault(u=>u.UserName == "Judge")
+                            User = new User()
+                            {
+                                UserName = "Judge",
+                                NormalizedUserName = "JUDJE"
+                            }
                         },
                         new Employee()
                         {
                             Name = "Secretary",
                             Surname = "Secretary",
                             Role = Enums.Role.Secretary,
-                            User = context.Users.FirstOrDefault(u=>u.UserName == "Secretary")
+                            User = new User()
+                            {
+                                UserName = "Secretary",
+                                NormalizedUserName = "SECRETARY"
+                            }
                         },
                         new Employee()
                         {
                             Name = "Assistant",
                             Surname = "Assistant",
                             Role = Enums.Role.Assistant,
-                            User = context.Users.FirstOrDefault(u=>u.UserName == "Assistant")
+                            User = new User()
+                            {
+                                UserName = "Assistant",
+                                NormalizedUserName = "ASSISTANT"
+                            }
                         },
                         new Employee()
                         {
                             Name = "Adminisrator",
                             Surname = "Adminisrator",
                             Role = Enums.Role.Administrator,
-                            User = context.Users.FirstOrDefault(u=>u.UserName == "Adminisrator")
+                            User = new User()
+                            {
+                                Email = "andrey.mar4uk2011@yandex.ru",
+                                EmailConfirmed = true,
+                                UserName = "Adminisrator",
+                                NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
+                            }
                         }
                     };
 
@@ -118,7 +106,7 @@ namespace SportsCompetition
                     context.Employees.AddRange(employees);
                     context.SaveChanges();
                 }
-                
+
                 if (!context.Competition.Any())
                 {
                     var competitions = new List<Competition>()

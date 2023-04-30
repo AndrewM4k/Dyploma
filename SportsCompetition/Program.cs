@@ -29,7 +29,7 @@ namespace SportsCompetition
             builder.Services.AddScoped<SportsmanService>();
             builder.Services.AddScoped<SportsmanCompetitionService>();
 
-            builder.Services.AddIdentityservicer(builder.Configuration);
+            builder.Services.AddIdentityServicer(builder.Configuration);
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddScoped<RefreshTokenService>();
 

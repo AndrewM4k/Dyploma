@@ -9,7 +9,7 @@ namespace SportsCompetition.Extencions
 {
     public static class IdentityServiceExtencions
     {
-        public static IServiceCollection AddIdentityservicer(this IServiceCollection services,
+        public static IServiceCollection AddIdentityServicer(this IServiceCollection services,
             IConfiguration configuration)
         {
             services.AddIdentityCore<User>(opt => 
