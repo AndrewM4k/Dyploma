@@ -27,16 +27,16 @@ namespace SportsCompetition.Services
         public async Task<IQueryable<Record>> GetAllRecords()
         {
             const string key = "all-records";
-            var cached = _cacheService.GetValue<IQueryable<Record>>(key);
+            var cached = _cacheService.GetValue<List<Record>>(key).AsQueryable();
 
             if (cached == null)
             {
-                var actual = _context.Record;
+                var actual = _context.Record.ToList();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);
                 }
-                return actual;
+                return actual.AsQueryable();
             }
             return cached;
         }

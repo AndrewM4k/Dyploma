@@ -1,82 +1,84 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using SportsCompetition.Dtos;
 using SportsCompetition.Enums;
 using SportsCompetition.Filters;
 using SportsCompetition.Models;
+using SportsCompetition.Persistance;
+using SportsCompetition.Services;
 
 namespace SportsCompetition.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
     public class RolesController : Controller
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILogger<RecordController> _logger;
+        private readonly SportCompetitionDbContext _context;
         private readonly UserManager<User> _userManager;
-        public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        private readonly IMapper _mapper;
+
+        public RolesController(UserManager<User> userManager, ILogger<RecordController> logger, SportCompetitionDbContext context, IMapper mapper)
         {
-            _roleManager = roleManager;
             _userManager = userManager;
+            _logger = logger;
+            _context = context;
+            _mapper = mapper;
         }
-
-        public IActionResult Create() => View();
-        [CustomAuthorize(Role.Sportsman)]
-        [HttpPost]
-        public async Task<IActionResult> Create(string name)
+        [HttpGet("GetRoles")]
+        public async Task<IActionResult> Get(Guid emloyeeId)
         {
-            if (!string.IsNullOrEmpty(name))
+            try
             {
-                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
-                if (result.Succeeded)
+                var emp = _context.Employees
+                .Include(e => e.User)
+                .FirstOrDefault(e => e.Id == emloyeeId);
+
+                User user = await _userManager.FindByIdAsync(emp.UserId.ToString());
+                if (user != null)
                 {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    // получем список ролей пользователя
+                    var userRoles = await _userManager.GetRolesAsync(user);
+
+                    return Ok(userRoles.ToList());
                 }
             }
-            return View(name);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Delete(string id)
-        {
-            IdentityRole role = await _roleManager.FindByIdAsync(id);
-            if (role != null)
+            catch (Exception)
             {
-                IdentityResult result = await _roleManager.DeleteAsync(role);
+                throw;
             }
-            return RedirectToAction("Index");
+            return BadRequest( "User not exist");
         }
 
-        public IActionResult UserList() => View(_userManager.Users.ToList());
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(string userId, List<string> roles)
+            [HttpGet("GetUsers")]
+        public async Task<IEnumerable<User>> GetUser(Role role)
         {
-            // получаем пользователя
-            User user = await _userManager.FindByIdAsync(userId);
+            var users = await _userManager.GetUsersInRoleAsync(role.ToString());
+            return users;
+        }
+
+            [HttpPost("EditById")]
+        public async Task<IActionResult> Edit(Guid userId, Role role)
+        {
+            User user = await _userManager.FindByIdAsync(userId.ToString());
             if (user != null)
             {
                 // получем список ролей пользователя
-                var userRoles = await _userManager.GetRolesAsync(user);
-                // получаем все роли
-                var allRoles = _roleManager.Roles.ToList();
-                // получаем список ролей, которые были добавлены
-                var addedRoles = roles.Except(userRoles);
-                // получаем роли, которые были удалены
-                var removedRoles = userRoles.Except(roles);
+                var userRole = await _userManager.GetRolesAsync(user);
+                
+                await _userManager.AddToRoleAsync(user, role.ToString());
 
-                await _userManager.AddToRolesAsync(user, addedRoles);
+                await _userManager.RemoveFromRolesAsync(user, userRole);
 
-                await _userManager.RemoveFromRolesAsync(user, removedRoles);
-
-                return RedirectToAction("UserList");
+                return Ok();
             }
 
-            return NotFound();
+            return BadRequest("User not exist");
         }
     }
 }

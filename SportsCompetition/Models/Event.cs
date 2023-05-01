@@ -12,7 +12,7 @@ namespace SportsCompetition.Models
         public string Description { get; set; }
         public DateTime DateofStart { get; set; }
 
-        public ICollection<Streama> Shedule { get; set;}
+        public ICollection<Stream> Shedule { get; set;}
 
         public ICollection<Competition> Competitions { get; set; }
 

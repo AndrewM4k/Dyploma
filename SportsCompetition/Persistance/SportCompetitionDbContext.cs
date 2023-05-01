@@ -17,7 +17,7 @@ namespace SportsCompetition.Persistance
         public DbSet<Standart> Standart { get; set; }
         public DbSet<Competition> Competition { get; set; }
         public DbSet<SportsmanCompetition> SportsmanCompetition { get; set; }
-        public DbSet<Streama> Streams { get; set; }
+        public DbSet<Models.Stream> Streams { get; set; }
         public DbSet<Attempt> Attempt { get; set; }
 
         public SportCompetitionDbContext(DbContextOptions<SportCompetitionDbContext> options)
@@ -132,11 +132,11 @@ namespace SportsCompetition.Persistance
                 .HasMany(s => s.Attempts)
                 .WithOne(a => a.SportsmanCompetition);
 
-            modelBuilder.Entity<Streama>()
+            modelBuilder.Entity<Models.Stream>()
                 .HasMany(s => s.SportsmanCompetitions)
                 .WithOne(o => o.Stream);
 
-            modelBuilder.Entity<Streama>()
+            modelBuilder.Entity<Models.Stream>()
                .HasMany(s => s.Employees)
                .WithMany(e => e.Streams)
                .UsingEntity<StreamJudgeEmployee>(
@@ -145,7 +145,7 @@ namespace SportsCompetition.Persistance
                        .WithMany(e => e.StreamJudgeEmployees)
                        .HasForeignKey(c => c.StreamId),
                    stream => stream
-                       .HasOne<Streama>()
+                       .HasOne<Models.Stream>()
                        .WithMany(s => s.StreamJudgeEmployees)
                        .HasForeignKey(s => s.EmployeeId)
                    );

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Controllers;
@@ -14,23 +15,41 @@ namespace SportsCompetition.Services
         private readonly ILogger<SportsmanController> _logger;
         private readonly SportCompetitionDbContext _context;
         private readonly ICacheService _cacheService;
+        private readonly UserManager<User> _userManager;
 
-        public SportsmanService(ILogger<SportsmanController> logger, SportCompetitionDbContext context, ICacheService cacheService)
+        public SportsmanService(ILogger<SportsmanController> logger, SportCompetitionDbContext context, ICacheService cacheService, UserManager<User> userManager)
         {
             _logger = logger;
             _context = context;
             _cacheService = cacheService;
+            _userManager = userManager;
         }
 
-        [HttpGet("readAllSportsmans")]
-        public async Task<IQueryable<Sportsman>> GetSportsmans()
+        public async Task<IEnumerable<Sportsman>> GetSportsmans()
         {
             const string key = "all-sportsmans";
-            var cached = _cacheService.GetValue<IQueryable<Sportsman>>(key);
+            var cached = _cacheService.GetValue<List<Sportsman>>(key);
 
             if (cached == null)
             {
-                var actual = _context.Sportsmans;
+                var actual = _context.Sportsmans.ToList();
+                if (actual.ToList().Count != 0)
+                {
+                    _cacheService.SetValue(key, actual);
+                }
+                return actual;
+            }
+            return cached;
+        }
+
+        public async Task<IEnumerable<Competition>> GetCompetitions()
+        {
+            const string key = "all-competitions";
+            var cached = _cacheService.GetValue<List<Competition>>(key);
+
+            if (cached == null)
+            {
+                var actual = _context.Competition.ToList();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);

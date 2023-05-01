@@ -20,21 +20,34 @@ namespace SportsCompetition.Controllers
         private readonly IMapper _mapper;
         private readonly EventService _eventService;
 
-        public EventController(ILogger<EventController> logger, SportCompetitionDbContext context, IMapper mapper)
+        public EventController(ILogger<EventController> logger, SportCompetitionDbContext context, IMapper mapper, EventService eventService)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _eventService = eventService;
         }
 
         [HttpGet("readAllEvents")]
         public async Task<IEnumerable<GetEventDto>> Get()
         {
-            return _mapper.ProjectTo<GetEventDto>(await _eventService.GetEventsAsync());
+            var events = new List<GetEventDto>();
+            try
+            {
+                foreach (var item in await _eventService.GetEventsAsync())
+                {
+                    events.Add(_mapper.Map<GetEventDto>(item));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+            }
+            return events;
         }
 
         [HttpPost("addEvent")]
-        public async Task<ActionResult> AddEvent(AddEventDto dto)
+        public async Task<IActionResult> AddEvent(AddEventDto dto)
         {
             var @event = _mapper.Map<Event>(dto);
             await _eventService.AddEvent(@event);
@@ -43,7 +56,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpPut("updateEvent")]
-        public async Task<ActionResult> UpdateEvent(UpdateEventDto dto)
+        public async Task<IActionResult> UpdateEvent(UpdateEventDto dto)
         {
             var @event = _mapper.Map<Event>(dto);
             await _eventService.UpdateEvent(@event);
@@ -52,7 +65,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpDelete("deleteEvent/{id:Guid}")]
-        public async Task<ActionResult> DeleteEvent(Guid id)
+        public async Task<IActionResult> DeleteEvent(Guid id)
         {
             await _eventService.DeleteEvent(id);
             return Ok();

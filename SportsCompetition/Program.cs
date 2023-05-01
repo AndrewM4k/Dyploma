@@ -20,10 +20,8 @@ namespace SportsCompetition
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            //builder.Services.AddIdentityServices(builder.Configuration);
 
             builder.Services.AddScoped<StreamService>();
-            builder.Services.AddScoped<SecretaryService>();
             builder.Services.AddScoped<EventService>();
             builder.Services.AddScoped<EmployeeService>();
             builder.Services.AddScoped<SportsmanService>();
@@ -53,7 +51,7 @@ namespace SportsCompetition
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef') Password_04Adminisrator ",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,

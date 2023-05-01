@@ -36,7 +36,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpPost("addRecord")]
-        public async Task<ActionResult> AddRecord(AddRecordDto dto)
+        public async Task<IActionResult> AddRecord(AddRecordDto dto)
         {
             var record = _mapper.Map<Record>(dto);
             _recordService.AddRecord(record);
@@ -44,7 +44,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpPut("updateRecord")]
-        public async Task<ActionResult> UpdateRecord(UpdateRecordDto dto)
+        public async Task<IActionResult> UpdateRecord(UpdateRecordDto dto)
         {
             var record = _mapper.Map<Record>(dto);
             _recordService.UpdateRecord(record);
@@ -52,7 +52,7 @@ namespace SportsCompetition.Controllers
         }
 
         [HttpDelete("deleteRecord/{id:Guid}")]
-        public async Task<ActionResult> DeleteRecord(Guid id)
+        public async Task<IActionResult> DeleteRecord(Guid id)
         {
             _recordService.DeleteRecord(id);
             return Ok();

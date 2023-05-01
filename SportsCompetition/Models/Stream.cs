@@ -2,7 +2,7 @@
 
 namespace SportsCompetition.Models
 {
-    public class Streama
+    public class Stream
     {
         public Guid Id { get; set; }
         public Event Event { get; set; }

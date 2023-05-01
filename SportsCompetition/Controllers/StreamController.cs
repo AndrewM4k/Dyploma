@@ -3,103 +3,94 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SportsCompetition.Dtos;
+using SportsCompetition.Enums;
+using SportsCompetition.Filters;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
+using SportsCompetition.Services;
+using System.Collections.Generic;
+using System.IO;
 
 namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[CustomAuthorize(Role.Secretary)]
+    //[CustomAuthorize(Role.Administrator)]
     [Authorize]
     public class StreamController : ControllerBase
     {
         private readonly ILogger<StreamController> _logger;
         private readonly SportCompetitionDbContext _context;
         private readonly IMapper _mapper;
+        private readonly StreamService _streamService;
 
-        public StreamController(ILogger<StreamController> logger, SportCompetitionDbContext context, IMapper mapper)
+        public StreamController(ILogger<StreamController> logger, SportCompetitionDbContext context, IMapper mapper, StreamService streamService)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _streamService = streamService;
         }
 
         [HttpGet("readAllStreams")]
         public async Task<IEnumerable<GetStreamDto>> Get()
         {
-            return _mapper.ProjectTo<GetStreamDto>(_context.Streams);
-        }
-
-        [HttpPost("addStream")]
-        public async Task<ActionResult> AddStream(AddStreamDto dto)
-        {
-            using var transaction = _context.Database.BeginTransaction();
+            var streams = new List<GetStreamDto>();
             try
             {
-                var stream = _mapper.Map<Streama>(dto);
-
-                await _context.AddAsync(stream);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
+                foreach (var item in await _streamService.GetStreams())
+                {
+                    streams.Add(_mapper.Map<GetStreamDto>(item));
+                }
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
+                _logger.LogInformation(ex.Message);
             }
+            return streams;
         }
 
         [HttpPut("updateStream")]
         public async Task<ActionResult> UpdateStream(UpdateStreamDto dto)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var stream = _mapper.Map<Streama>(dto);
+            var stream = _mapper.Map<Models.Stream>(dto);
 
-                await _context.AddAsync(stream);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            _streamService.UpdateStream(stream);
+            return Ok();
         }
 
         [HttpDelete("deleteStream/{id:Guid}")]
         public async Task<ActionResult> DeleteStream(Guid id)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                var employee = await _context.Streams.FirstOrDefaultAsync(e => e.Id == id);
-
-                if (employee == null)
-                {
-                    return NotFound();
-                }
-
-                _context.Remove(employee);
-                await _context.SaveChangesAsync();
-
-                await transaction.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                return StatusCode(500);
-            }
+            _streamService.DeleteStream(id);
+            return Ok();
         }
+
+        [HttpPost("AddStream")]
+        public async Task<ActionResult> AddStream(AddStreamDto dto)
+        {
+            var stream = _mapper.Map<Models.Stream>(dto);
+            var eventid = dto.EventId;
+            await _streamService.AddStream(stream, eventid);
+            return Ok();
+        }
+
+        [HttpPost("creationOfStream")]
+        public async Task<ActionResult> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamId, int numberofStream)
+        {
+            await _streamService.CreationStream(sportsmanCompetitions, @event, streamId, numberofStream);
+            return Ok();
+        }
+
+        [HttpPost("addJudgesToStream")]
+        public async Task<ActionResult> AddJudgesToStream(Guid streamId, List<Guid> judges)
+        {
+            await _streamService.AddJudgesToStream(streamId, judges);
+            return Ok();
+        }
+            
     }
 }

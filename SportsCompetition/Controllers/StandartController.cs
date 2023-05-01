@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Dtos;
 using SportsCompetition.Models;
-using Microsoft.AspNetCore.Authorization;
 using SportsCompetition.Persistance;
 using SportsCompetition.Services;
+using SportsCompetition.Filters;
+using SportsCompetition.Enums;
 
 namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [CustomAuthorize(Role.Secretary)]
+    [CustomAuthorize(Role.Administrator)]
     public class StandartController : ControllerBase
     {
         private readonly ILogger<StandartController> _logger;

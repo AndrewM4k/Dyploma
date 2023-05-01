@@ -24,19 +24,19 @@ namespace SportsCompetition.Services
             _cacheService = cacheService;
         }
 
-        public async Task<IQueryable<Event>> GetEventsAsync()
+        public async Task<IEnumerable<Event>> GetEventsAsync()
         {
             const string key = "all-events";
-            var cached = _cacheService.GetValue<IQueryable<Event>>(key);
+            var cached = _cacheService.GetValue<List<Event>>(key);
 
             if (cached == null)
             {
-                var actual = _context.Event;
+                var actual = _context.Event.ToList();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);
                 }
-                return actual;
+                return actual.AsQueryable();
             }
             return cached;
         }
@@ -52,7 +52,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
@@ -70,7 +70,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
@@ -101,7 +101,7 @@ namespace SportsCompetition.Services
             _cacheService.UpdateValue(key);
         }
 
-        public async Task<Event> InitializationOfEvent(Event @event, List<Streama> list)
+        public async Task<Event> InitializationOfEvent(Event @event, List<Models.Stream> list)
         {
             @event.Shedule = list;
             @event.CurrentStream = list.First().Id;
@@ -109,30 +109,24 @@ namespace SportsCompetition.Services
             await _context.SaveChangesAsync();
             return @event;
         }
-        public async Task<Event> StartEvent(Event @event)
-        {
-            foreach (var item1 in @event.Shedule)
-            {
-                foreach (var item2 in item1.SportsmanCompetitions)
-                {
-                    SportsmanCompetition sportsmanCompetition = item2;
-                    await _sportsmancompetitionservice.AttemptsResult(sportsmanCompetition);
-                }
-                await _context.SaveChangesAsync();
-            }
-            await _context.SaveChangesAsync();
-            return @event;
-        }
 
         public async Task<int> SetWeight(SportsmanCompetition sportsmanCompetition, int attemptNumber, int weight)
         {
-            var sc =_context.SportsmanCompetition
+            var sc = _context.SportsmanCompetition
                 .Include(sc => sc.Attempts)
                 .FirstOrDefault(sc => sc.Id == sportsmanCompetition.Id);
-            if (sc == null)
+            try
             {
-
+                if (sc == null)
+                {
+                    new Exception("sportsmanCompetition is not exist");
+                }
             }
+            catch (Exception exception)
+            {
+                _logger.LogInformation(exception.Message);
+            }
+
             sc.Attempts
                 .FirstOrDefault(a => a.Number == attemptNumber).Weihgt = weight;
             return weight;

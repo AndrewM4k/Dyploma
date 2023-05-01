@@ -7,8 +7,8 @@ namespace SportsCompetition.Models
         public Guid Id { get; set; }
         public Guid SportsmanId { get; set; }
         public Guid CompetitionId { get; set; }
-        public Guid CurrentAttempt { get; set; }
+        public int CurrentAttempt { get; set; }
         public ICollection<Attempt> Attempts { get; set; }
-        public Streama Stream { get; set; }
+        public Stream Stream { get; set; }
     }
 }

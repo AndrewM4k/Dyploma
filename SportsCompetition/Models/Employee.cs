@@ -14,6 +14,6 @@ namespace SportsCompetition.Models
         public ICollection<EmployeeEvent> EmployeeEvents { get; set; }
         public ICollection<Event> Events { get; set; }
         public ICollection<StreamJudgeEmployee> StreamJudgeEmployees { get; set; }
-        public ICollection<Streama> Streams { get; set; }
+        public ICollection<Stream> Streams { get; set; }
     }
 }

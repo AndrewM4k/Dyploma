@@ -6,6 +6,7 @@
         Secretary,
         Assistant,
         Sportsman,
-        Administrator
+        Administrator,
+        None
     }
 }

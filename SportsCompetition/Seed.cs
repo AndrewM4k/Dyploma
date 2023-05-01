@@ -30,21 +30,6 @@ namespace SportsCompetition
                         await roleManager.CreateAsync(item);
                     }
                 }
-
-                //if (role.Name == "Adminisrator")
-                //{
-                //       var user = new User()
-                //       {
-                //            Email = "andrey.mar4uk2011@yandex.ru",
-                //            EmailConfirmed = true,
-                //            UserName = "Adminisrator",
-                //            NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
-                //       };
-
-
-                //await userManager.CreateAsync(user,
-                //    $"{{u2w]B&kz;{role.Name}");
-
                 if (!context.Employees.Any())
                 {
                     var employees = new List<Employee>()

@@ -25,16 +25,16 @@ namespace SportsCompetition.Services
         public async Task<IQueryable<Standart>> GetAllStandarts()
         {
             const string key = "all-standarts";
-            var cached = _cacheService.GetValue<IQueryable<Standart>>(key);
+            var cached = _cacheService.GetValue<List<Standart>>(key).AsQueryable();
 
             if (cached == null)
             {
-                var actual = _context.Standart;
+                var actual = _context.Standart.ToList();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);
                 }
-                return actual;
+                return actual.AsQueryable();
             }
             return cached;
         }

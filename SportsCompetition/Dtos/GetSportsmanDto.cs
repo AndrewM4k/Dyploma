@@ -8,8 +8,6 @@ namespace SportsCompetition.Dtos
         public string Name { get; set; }
         public string Surname { get; set; }
         public Gender Gender { get; set; }
-        public string Email { get; set; }
-        public string Username { get; set; }
         public DateTime Birthdate { get; set; }
     }
 }

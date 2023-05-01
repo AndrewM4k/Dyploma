@@ -25,20 +25,25 @@ namespace ApiWithEF.Common
 
             CreateMap<AddEmployeeDto, Employee>();
             CreateMap<Employee, AddEmployeeDto>();
-                //.ForMember(dest => dest.Role, opt =>opt.MapFrom(src => src.Role.Name));
             CreateMap<GetEmployeeDto, Employee>();
-            CreateMap<Employee, GetEmployeeDto>();
-                //.ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name));
+            CreateMap<Employee, GetEmployeeDto>()
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role));
             CreateMap<UpdateEmployeeDto, Employee>();
             CreateMap<Employee, UpdateEmployeeDto>();
-                //.ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name));
+            //.ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name));
 
-            CreateMap<AddStreamDto, Streama>();
-            CreateMap<Streama, AddStreamDto>();
-            CreateMap<GetStreamDto, Streama>();
-            CreateMap<Streama, GetStreamDto>();
-            CreateMap<UpdateStreamDto, Streama>();
-            CreateMap<Streama, UpdateStreamDto>();
+            CreateMap<AddStreamDto, SportsCompetition.Models.Stream>();
+            CreateMap<SportsCompetition.Models.Stream, AddStreamDto>();
+            CreateMap<GetStreamDto, SportsCompetition.Models.Stream>();
+            CreateMap<SportsCompetition.Models.Stream, GetStreamDto>();
+            CreateMap<UpdateStreamDto, SportsCompetition.Models.Stream>();
+            CreateMap<SportsCompetition.Models.Stream, UpdateStreamDto>();
+
+            CreateMap<GetCompetitionDto, Competition>();
+            CreateMap<Competition, GetCompetitionDto>();
+
+            CreateMap<GetSportsmanCompetitionDto, SportsmanCompetition>();
+            CreateMap<SportsmanCompetition, GetSportsmanCompetitionDto>();
         }
     }
 }

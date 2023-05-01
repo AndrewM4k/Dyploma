@@ -1,7 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using SportsCompetition.Dtos;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using System.IO;
+using System.Runtime.Serialization;
+using WebApplication1.Cache;
 
 namespace SportsCompetition.Services
 {
@@ -9,84 +15,176 @@ namespace SportsCompetition.Services
     {
         private readonly ILogger<StreamService> _logger;
         private readonly SportCompetitionDbContext _context;
+        private readonly ICacheService _cacheService;
 
-        public StreamService(ILogger<StreamService> logger, SportCompetitionDbContext context)
+
+        public StreamService(ILogger<StreamService> logger, SportCompetitionDbContext context, ICacheService cacheService)
         {
             _logger = logger;
             _context = context;
+            _cacheService = cacheService;
+        }
+        public async Task<IEnumerable<Models.Stream>> GetStreams()
+        {
+            const string key = "all-Streams";
+            var cached = _cacheService.GetValue<List<Models.Stream>>(key);
+
+            if (cached == null)
+            {
+                var actual = _context.Streams.ToList();
+                if (actual.ToList().Count != 0)
+                {
+                    _cacheService.SetValue(key, actual);
+                }
+                return actual;
+            }
+            return cached; ;
+        }
+        public async Task AddStream(Models.Stream stream, Guid eventid)
+        {
+            const string key = "all-Streams";
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var @event = _context.Event.FirstOrDefault(e => e.Id == eventid);
+                stream.Event = @event;
+                await _context.AddAsync(stream);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+            }
+            _cacheService.UpdateValue(key);
+        }
+        public async Task UpdateStream(Models.Stream stream)
+        {
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                _context.Update(stream);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+            }
+        }
+        public async Task DeleteStream(Guid id)
+        {
+            const string key = "all-events";
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var stream = await _context.Streams.FirstOrDefaultAsync(s => s.Id == id);
+
+                if (stream == null)
+                {
+                    return;
+                }
+
+                _context.Remove(stream);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+            }
+            _cacheService.UpdateValue(key);
         }
 
-        public async Task<Streama> CreationStream(List<Sportsman> sportsmans, List<Competition> competitions, Event @event, int numberofStream)
+        public async Task<Models.Stream> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamid, int numberofStream)
         {
-            var streama = new Streama();
+            var stream = _context.Streams.FirstOrDefault(s => s.Id == streamid);
+            if (stream == null)
+            {
+                stream = new Models.Stream();
+            }
             var list = new List<SportsmanCompetition>();
-
-            if (sportsmans.Count == competitions.Count)
+            foreach (var item in sportsmanCompetitions)
             {
-                for (int i = 0; i < sportsmans.Count; i++)
-                {
-                    list.Add(await CreationSportsmanCompetition(sportsmans[i], competitions[i]));
-                }
+                list.Add(_context.SportsmanCompetition.FirstOrDefault(sc => sc.Id == item));
             }
-            else
+            
+            stream.SportsmanCompetitions = list;
+            stream.Event = _context.Event.FirstOrDefault(s => s.Id == @event);
+            stream.Number = numberofStream;
+
+            foreach (var item in stream.SportsmanCompetitions)
             {
-                _logger.LogWarning("Not right count of sportsmans and competition");
-            }
-
-
-            streama.SportsmanCompetitions = list;
-            streama.Event = @event;
-            streama.Number = numberofStream;
-
-            foreach (var item in streama.SportsmanCompetitions)
-            {
-                var att1 = new Attempt() { Number = 1, EventId = streama.Event.Id };
-                var att2 = new Attempt() { Number = 2, EventId = streama.Event.Id };
-                var att3 = new Attempt() { Number = 3, EventId = streama.Event.Id };
+                var att1 = new Attempt() { Number = 1, EventId = stream.Event.Id };
+                var att2 = new Attempt() { Number = 2, EventId = stream.Event.Id };
+                var att3 = new Attempt() { Number = 3, EventId = stream.Event.Id };
 
                 var attempts = new List<Attempt>() { att1, att2, att3 };
 
-                item.CurrentAttempt = att1.Id;
+                item.CurrentAttempt = 1;
 
                 foreach (var attempt in attempts)
                 {
                     item.Attempts.Add(attempt);
                 }
 
-                await _context.AddAsync(streama);
+                await _context.AddAsync(stream);
                 await _context.SaveChangesAsync();
             }
-            return streama;
+            return stream;
         }
 
-        public async Task<SportsmanCompetition> CreationSportsmanCompetition(Sportsman sportsman, Competition competition)
+        public async Task CreationSportsmanCompetition(Guid sportsmanId, Guid competitionId, Guid streamId)
         {
-            var sportsmanCompetition = new SportsmanCompetition();
+            try
+            {
+                var sportsmanCompetition = new SportsmanCompetition()
+                {
+                    SportsmanId = sportsmanId,
+                    CompetitionId = competitionId,
+                    CurrentAttempt = 1,
+                    Stream = _context.Streams.FirstOrDefault(s=>s.Id == streamId)
+                };
 
-            sportsmanCompetition.SportsmanId = sportsman.Id;
-            sportsmanCompetition.CompetitionId = competition.Id;
-
-            await _context.AddAsync(sportsmanCompetition);
-            await _context.SaveChangesAsync();
-            return sportsmanCompetition;
+                await _context.SportsmanCompetition.AddAsync(sportsmanCompetition);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+            }
+            return;
         }
 
-        public async Task<Streama> AddJudgesToStream(Guid streamId, List<Employee> judges)
+        public async Task<Models.Stream> AddJudgesToStream(Guid streamId, List<Guid> judges)
         {
             var stream = _context.Streams
                 .Include(s => s.Employees)
                 .FirstOrDefault(s => s.Id == streamId);
-
-            foreach (var judge in judges)
+            try
             {
-                judge.Streams.Add(stream);
+                foreach (var judge in judges)
+                {
+
+                    var employee = _context.Employees.FirstOrDefault(s => s.Id == judge);
+                    if (employee.Role != Enums.Role.Judge)
+                    {
+                        new Exception("wrong employee, not judge");
+                    }
+                    employee.Streams.Add(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
             }
 
             await _context.SaveChangesAsync();
 
             return stream;
         }
-
-
     }
 }
