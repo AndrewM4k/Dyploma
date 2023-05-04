@@ -24,6 +24,7 @@ namespace SportsCompetition.Services
             _context = context;
             _cacheService = cacheService;
         }
+
         public async Task<IEnumerable<Models.Stream>> GetStreams()
         {
             const string key = "all-Streams";
@@ -31,15 +32,18 @@ namespace SportsCompetition.Services
 
             if (cached == null)
             {
-                var actual = _context.Streams.ToList();
-                if (actual.ToList().Count != 0)
+                var actual = await _context.Streams.ToListAsync();
+
+                if (actual.Count != 0)
                 {
                     _cacheService.SetValue(key, actual);
                 }
+
                 return actual;
             }
-            return cached; ;
+            return cached;
         }
+
         public async Task AddStream(Models.Stream stream, Guid eventid)
         {
             const string key = "all-Streams";

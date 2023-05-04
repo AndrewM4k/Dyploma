@@ -17,10 +17,10 @@ namespace SportsCompetition.Services
         private readonly ILogger<SportsmanController> _logger;
         private readonly SportCompetitionDbContext _context;
         private readonly ICacheService _cacheService;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser<Guid>> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-        public EmployeeService(ILogger<SportsmanController> logger, SportCompetitionDbContext context, ICacheService cacheService, UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+        public EmployeeService(ILogger<SportsmanController> logger, SportCompetitionDbContext context, ICacheService cacheService, UserManager<IdentityUser<Guid>> userManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _cacheService = cacheService;
             _logger = logger;
@@ -52,15 +52,14 @@ namespace SportsCompetition.Services
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                employee.User = new User()
+                employee.User = new IdentityUser<Guid>()
                 {
-                    Id = new Guid(),
                     UserName = username,
-                    NormalizedUserName = username.ToUpper()
+                    
                 };
                 employee.Role = role;
 
-                await _userManager.CreateAsync(employee.User, $"{password}");
+                var result = await _userManager.CreateAsync(employee.User, $"{password}");
                 await _userManager.AddToRoleAsync(employee.User, employee.Role.ToString());
 
                 _context.Employees.Add(employee);

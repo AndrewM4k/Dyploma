@@ -13,7 +13,7 @@ namespace SportsCompetition
             {
                 var context = scope.ServiceProvider.GetRequiredService<SportCompetitionDbContext>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
 
                 if (!roleManager.Roles.Any())
                 {
@@ -39,7 +39,7 @@ namespace SportsCompetition
                             Name = "Judge",
                             Surname = "Judge",
                             Role = Enums.Role.Judge,
-                            User = new User()
+                            User = new IdentityUser<Guid>()
                             {
                                 UserName = "Judge",
                                 NormalizedUserName = "JUDJE"
@@ -50,7 +50,7 @@ namespace SportsCompetition
                             Name = "Secretary",
                             Surname = "Secretary",
                             Role = Enums.Role.Secretary,
-                            User = new User()
+                            User = new IdentityUser<Guid>()
                             {
                                 UserName = "Secretary",
                                 NormalizedUserName = "SECRETARY"
@@ -61,7 +61,7 @@ namespace SportsCompetition
                             Name = "Assistant",
                             Surname = "Assistant",
                             Role = Enums.Role.Assistant,
-                            User = new User()
+                            User = new IdentityUser<Guid>()
                             {
                                 UserName = "Assistant",
                                 NormalizedUserName = "ASSISTANT"
@@ -72,7 +72,7 @@ namespace SportsCompetition
                             Name = "Adminisrator",
                             Surname = "Adminisrator",
                             Role = Enums.Role.Administrator,
-                            User = new User()
+                            User = new IdentityUser<Guid>()
                             {
                                 Email = "andrey.mar4uk2011@yandex.ru",
                                 EmailConfirmed = true,

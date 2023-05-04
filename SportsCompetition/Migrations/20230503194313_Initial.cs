@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SportsCompetition.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,7 +28,6 @@ namespace SportsCompetition.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -91,21 +90,6 @@ namespace SportsCompetition.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Record", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sportsmans",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sportsmans", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -270,6 +254,28 @@ namespace SportsCompetition.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sportsmans",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sportsmans", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sportsmans_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EventCompetition",
                 columns: table => new
                 {
@@ -338,31 +344,6 @@ namespace SportsCompetition.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EventSportsman",
-                columns: table => new
-                {
-                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SportsmanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StreamNumber = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EventSportsman", x => new { x.EventId, x.SportsmanId });
-                    table.ForeignKey(
-                        name: "FK_EventSportsman_Event_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Event",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventSportsman_Sportsmans_SportsmanId",
-                        column: x => x.SportsmanId,
-                        principalTable: "Sportsmans",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CompetitionStandart",
                 columns: table => new
                 {
@@ -411,13 +392,38 @@ namespace SportsCompetition.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventSportsman",
+                columns: table => new
+                {
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SportsmanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StreamNumber = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventSportsman", x => new { x.EventId, x.SportsmanId });
+                    table.ForeignKey(
+                        name: "FK_EventSportsman_Event_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Event",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventSportsman_Sportsmans_SportsmanId",
+                        column: x => x.SportsmanId,
+                        principalTable: "Sportsmans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SportsmanCompetition",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SportsmanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CurrentAttempt = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CurrentAttempt = table.Column<int>(type: "int", nullable: false),
                     StreamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -475,7 +481,7 @@ namespace SportsCompetition.Migrations
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Number = table.Column<int>(type: "int", nullable: false),
                     Weihgt = table.Column<int>(type: "int", nullable: false),
-                    AttemptResult = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttemptResult = table.Column<bool>(type: "bit", nullable: false),
                     SportsmanCompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -551,8 +557,7 @@ namespace SportsCompetition.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_UserId",
                 table: "Employees",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventCompetition_EventId",
@@ -578,6 +583,11 @@ namespace SportsCompetition.Migrations
                 name: "IX_SportsmanCompetition_StreamId",
                 table: "SportsmanCompetition",
                 column: "StreamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sportsmans_UserId",
+                table: "Sportsmans",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StreamJudgeEmployee_StreamId",

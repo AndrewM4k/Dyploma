@@ -1,4 +1,5 @@
-﻿using SportsCompetition.Enums;
+﻿using Microsoft.AspNetCore.Identity;
+using SportsCompetition.Enums;
 
 namespace SportsCompetition.Models
 {
@@ -9,6 +10,8 @@ namespace SportsCompetition.Models
         public string Surname { get; set; }
         public Gender Gender { get; set; }
         public DateTime Birthdate { get; set; }
+        public IdentityUser<Guid> User { get; set; }
+        public Guid UserId { get; set; }
         public ICollection<Competition> Competitions { get; set; }
 
         public ICollection<SportsmanCompetition> SportsmanCompetitions { get; set; }

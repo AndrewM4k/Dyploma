@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using SportsCompetition.Models;
@@ -15,7 +16,7 @@ namespace SportsCompetition.Services
             _context = context;
         }
 
-        public async Task<string> CreateRefreshTokenAsync(User user)
+        public async Task<string> CreateRefreshTokenAsync(IdentityUser<Guid> user)
         {
             var token = $"{Guid.NewGuid()}{Guid.NewGuid()}".Replace("-", "");
 

@@ -15,9 +15,9 @@ namespace SportsCompetition.Services
         private readonly ILogger<SportsmanController> _logger;
         private readonly SportCompetitionDbContext _context;
         private readonly ICacheService _cacheService;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-        public SportsmanService(ILogger<SportsmanController> logger, SportCompetitionDbContext context, ICacheService cacheService, UserManager<User> userManager)
+        public SportsmanService(ILogger<SportsmanController> logger, SportCompetitionDbContext context, ICacheService cacheService, UserManager<IdentityUser<Guid>> userManager)
         {
             _logger = logger;
             _context = context;

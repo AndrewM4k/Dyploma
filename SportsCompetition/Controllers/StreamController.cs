@@ -1,23 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SportsCompetition.Dtos;
 using SportsCompetition.Enums;
 using SportsCompetition.Filters;
-using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using SportsCompetition.Services;
-using System.Collections.Generic;
-using System.IO;
 
 namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[CustomAuthorize(Role.Secretary)]
     //[CustomAuthorize(Role.Administrator)]
     [Authorize]
     public class StreamController : ControllerBase
@@ -35,16 +28,13 @@ namespace SportsCompetition.Controllers
             _streamService = streamService;
         }
 
-        [HttpGet("readAllStreams")]
+        [HttpGet]
         public async Task<IEnumerable<GetStreamDto>> Get()
         {
             var streams = new List<GetStreamDto>();
             try
             {
-                foreach (var item in await _streamService.GetStreams())
-                {
-                    streams.Add(_mapper.Map<GetStreamDto>(item));
-                }
+                streams = _mapper.Map<List<GetStreamDto>>(await _streamService.GetStreams());
             }
             catch (Exception ex)
             {
@@ -53,23 +43,23 @@ namespace SportsCompetition.Controllers
             return streams;
         }
 
-        [HttpPut("updateStream")]
+        [HttpPut]
         public async Task<ActionResult> UpdateStream(UpdateStreamDto dto)
         {
             var stream = _mapper.Map<Models.Stream>(dto);
 
-            _streamService.UpdateStream(stream);
+            await _streamService.UpdateStream(stream);
             return Ok();
         }
 
-        [HttpDelete("deleteStream/{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> DeleteStream(Guid id)
         {
-            _streamService.DeleteStream(id);
+            await _streamService.DeleteStream(id);
             return Ok();
         }
 
-        [HttpPost("AddStream")]
+        [HttpPost]
         public async Task<ActionResult> AddStream(AddStreamDto dto)
         {
             var stream = _mapper.Map<Models.Stream>(dto);
@@ -78,14 +68,14 @@ namespace SportsCompetition.Controllers
             return Ok();
         }
 
-        [HttpPost("creationOfStream")]
+        [HttpPost("creationOfStreamGAVNO")]
         public async Task<ActionResult> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamId, int numberofStream)
         {
             await _streamService.CreationStream(sportsmanCompetitions, @event, streamId, numberofStream);
             return Ok();
         }
 
-        [HttpPost("addJudgesToStream")]
+        [HttpPost("addJudgesToStreamGAVNO")]
         public async Task<ActionResult> AddJudgesToStream(Guid streamId, List<Guid> judges)
         {
             await _streamService.AddJudgesToStream(streamId, judges);

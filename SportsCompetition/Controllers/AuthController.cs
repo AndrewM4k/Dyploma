@@ -15,15 +15,15 @@ namespace AutorisationApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly TokenService _tokenService;
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<IdentityUser<Guid>> _userManager;
+        private readonly SignInManager<IdentityUser<Guid>> _signInManager;
         private readonly RefreshTokenService _refreshTokenService;
         private readonly SportCompetitionDbContext _context;
 
         public AuthController(
             TokenService tokenService, 
-            UserManager<User> userManager, 
-            SignInManager<User> signInManager, 
+            UserManager<IdentityUser<Guid>> userManager, 
+            SignInManager<IdentityUser<Guid>> signInManager, 
             RefreshTokenService refreshTokenService, 
             SportCompetitionDbContext context)
         {
@@ -37,7 +37,7 @@ namespace AutorisationApi.Controllers
         [HttpPost("singUp")]
         public async Task<IActionResult> SignUnAsync(SingUpDto dto)
         {
-            var user = new User()
+            var user = new IdentityUser<Guid>()
             {
                 UserName = dto.Username,
             };

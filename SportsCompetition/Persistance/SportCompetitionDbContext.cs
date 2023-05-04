@@ -7,7 +7,7 @@ using SportsCompetition.Models;
 
 namespace SportsCompetition.Persistance
 {
-    public class SportCompetitionDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+    public class SportCompetitionDbContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
     {
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Sportsman> Sportsmans { get; set; }
@@ -156,11 +156,6 @@ namespace SportsCompetition.Persistance
 
             modelBuilder.Entity<RefreshToken>()
                 .HasKey(t => new { t.UserId, t.Token });
-
-            modelBuilder.Entity<User>()
-                .HasOne(e => e.Employee)
-                .WithOne(u => u.User)
-                .HasForeignKey<Employee>(u => u.UserId);
         }
     }
 }

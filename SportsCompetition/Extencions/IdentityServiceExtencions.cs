@@ -12,15 +12,15 @@ namespace SportsCompetition.Extencions
         public static IServiceCollection AddIdentityServicer(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddIdentityCore<User>(opt => 
+            services.AddIdentityCore<IdentityUser<Guid>>(opt => 
             {
                 opt.Password.RequireNonAlphanumeric = true;
                 opt.Password.RequiredLength = 10;
             })
                 .AddRoles<IdentityRole<Guid>>()
                 .AddRoleManager<RoleManager<IdentityRole<Guid>>>()
-                .AddUserManager<UserManager<User>>()
-                .AddSignInManager<SignInManager<User>>()
+                .AddUserManager<UserManager<IdentityUser<Guid>>>()
+                .AddSignInManager<SignInManager<IdentityUser<Guid>>>()
                 .AddRoleValidator<RoleValidator<IdentityRole<Guid>>>()
                 .AddEntityFrameworkStores<SportCompetitionDbContext>();
 

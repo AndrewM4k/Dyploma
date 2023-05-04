@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using SportsCompetition.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ namespace AutorisationApi.Services
             _key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration["TokenSecret"]));
         }
-        public string CreateToken(User user)
+        public string CreateToken(IdentityUser<Guid> user)
         {
             var claims = new List<Claim>()
             {

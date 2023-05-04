@@ -9,7 +9,7 @@ namespace SportsCompetition.Models
         public string Name { get; set; } 
         public string Surname { get; set; }
         public Enums.Role Role { get; set; }
-        public User User { get; set; }
+        public IdentityUser<Guid> User { get; set; }
         public Guid UserId { get; set; }
         public ICollection<EmployeeEvent> EmployeeEvents { get; set; }
         public ICollection<Event> Events { get; set; }

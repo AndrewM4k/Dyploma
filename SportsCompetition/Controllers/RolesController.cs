@@ -20,10 +20,10 @@ namespace SportsCompetition.Controllers
     {
         private readonly ILogger<RecordController> _logger;
         private readonly SportCompetitionDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<IdentityUser<Guid>> _userManager;
         private readonly IMapper _mapper;
 
-        public RolesController(UserManager<User> userManager, ILogger<RecordController> logger, SportCompetitionDbContext context, IMapper mapper)
+        public RolesController(UserManager<IdentityUser<Guid>> userManager, ILogger<RecordController> logger, SportCompetitionDbContext context, IMapper mapper)
         {
             _userManager = userManager;
             _logger = logger;
@@ -39,13 +39,13 @@ namespace SportsCompetition.Controllers
                 .Include(e => e.User)
                 .FirstOrDefault(e => e.Id == emloyeeId);
 
-                User user = await _userManager.FindByIdAsync(emp.UserId.ToString());
+                IdentityUser<Guid> user = await _userManager.FindByIdAsync(emp.UserId.ToString());
                 if (user != null)
                 {
                     // получем список ролей пользователя
                     var userRoles = await _userManager.GetRolesAsync(user);
 
-                    return Ok(userRoles.ToList());
+                    return Ok(userRoles);
                 }
             }
             catch (Exception)
@@ -56,16 +56,16 @@ namespace SportsCompetition.Controllers
         }
 
             [HttpGet("GetUsers")]
-        public async Task<IEnumerable<User>> GetUser(Role role)
+        public async Task<IEnumerable<IdentityUser<Guid>>> GetUser(Role role)
         {
             var users = await _userManager.GetUsersInRoleAsync(role.ToString());
             return users;
         }
 
-            [HttpPost("EditById")]
+        [HttpPost("EditById")]
         public async Task<IActionResult> Edit(Guid userId, Role role)
         {
-            User user = await _userManager.FindByIdAsync(userId.ToString());
+            IdentityUser<Guid> user = await _userManager.FindByIdAsync(userId.ToString());
             if (user != null)
             {
                 // получем список ролей пользователя
