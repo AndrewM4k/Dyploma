@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Controllers;
 using SportsCompetition.Dtos;
+using SportsCompetition.Enums;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using WebApplication1.Cache;
@@ -59,17 +60,31 @@ namespace SportsCompetition.Services
             return cached;
         }
 
-        public async Task AddSportsman(Sportsman sportsman)
+        public async Task AddSportsman(Sportsman sportsman, string username, string email, string password)
         {
             const string key = "all-sportsmans";
             using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                sportsman.User = new IdentityUser<Guid>
+                {
+                    UserName = username,
+                    Email = email
+                };
+                var result = await _userManager.CreateAsync(sportsman.User, $"{password}");
+                await _userManager.AddToRoleAsync(sportsman.User, Role.Sportsman.ToString());
 
-            await _context.AddAsync(sportsman);
-            await _context.SaveChangesAsync();
+                _context.Sportsmans.Add(sportsman);
+                _context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogInformation(ex.Message);
+            }
 
             await transaction.CommitAsync();
-
-            await transaction.RollbackAsync();
             _cacheService.UpdateValue(key);
         }
 

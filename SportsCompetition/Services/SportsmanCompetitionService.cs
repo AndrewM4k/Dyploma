@@ -45,17 +45,6 @@ namespace SportsCompetition.Services
                 .Weihgt;
         }
 
-        public async Task<SportsmanCompetition> SetWeight(Guid sportsmanCompetition, int attemptNumber, int weight)
-        {
-            var sc = _context.SportsmanCompetition
-                .Include(sc => sc.Attempts)
-                .FirstOrDefault(sc => sc.Id == sportsmanCompetition);
-
-            sc.Attempts
-                .FirstOrDefault(a => a.Number == attemptNumber).Weihgt = weight;
-            return sc;
-        }
-
         public async Task<bool> SetAttemptsResult(SportsmanCompetition sportsmanCompetition, bool attemptResult, int numberAttempt)
         {
             if (numberAttempt == 0)

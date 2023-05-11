@@ -106,43 +106,48 @@ namespace SportsCompetition.Services
         public async Task<Models.Stream> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamid, int numberofStream)
         {
             var stream = _context.Streams.FirstOrDefault(s => s.Id == streamid);
-            if (stream == null)
-            {
-                stream = new Models.Stream();
-            }
-            var list = new List<SportsmanCompetition>();
-            foreach (var item in sportsmanCompetitions)
-            {
-                list.Add(_context.SportsmanCompetition.FirstOrDefault(sc => sc.Id == item));
-            }
             
-            stream.SportsmanCompetitions = list;
-            stream.Event = _context.Event.FirstOrDefault(s => s.Id == @event);
-            stream.Number = numberofStream;
-
-            foreach (var item in stream.SportsmanCompetitions)
+            try
             {
-                var att1 = new Attempt() { Number = 1, EventId = stream.Event.Id };
-                var att2 = new Attempt() { Number = 2, EventId = stream.Event.Id };
-                var att3 = new Attempt() { Number = 3, EventId = stream.Event.Id };
-
-                var attempts = new List<Attempt>() { att1, att2, att3 };
-
-                item.CurrentAttempt = 1;
-
-                foreach (var attempt in attempts)
+                var list = new List<SportsmanCompetition>();
+                foreach (var item in sportsmanCompetitions)
                 {
-                    item.Attempts.Add(attempt);
+                    list.Add(_context.SportsmanCompetition.FirstOrDefault(sc => sc.Id == item));
                 }
 
-                await _context.AddAsync(stream);
-                await _context.SaveChangesAsync();
+                stream.SportsmanCompetitions = list;
+                if (stream.Event == null)
+                {
+                    stream.Event = _context.Event.FirstOrDefault(s => s.Id == @event);
+                }
+                stream.Number = numberofStream;
+
+                foreach (var item in stream.SportsmanCompetitions)
+                {
+                    var att1 = new Attempt() { Number = 1, EventId = @event };
+                    var att2 = new Attempt() { Number = 2, EventId = @event };
+                    var att3 = new Attempt() { Number = 3, EventId = @event };
+
+                    var attempts = new List<Attempt>() { att1, att2, att3 };
+
+                    item.CurrentAttempt = 1;
+
+                    item.Attempts = attempts;
+
+                    await _context.SaveChangesAsync();
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+            }
+
             return stream;
         }
 
         public async Task CreationSportsmanCompetition(Guid sportsmanId, Guid competitionId, Guid streamId)
         {
+            const string key = "all-sportsmanCompetitions";
             try
             {
                 var sportsmanCompetition = new SportsmanCompetition()
@@ -150,16 +155,19 @@ namespace SportsCompetition.Services
                     SportsmanId = sportsmanId,
                     CompetitionId = competitionId,
                     CurrentAttempt = 1,
-                    Stream = _context.Streams.FirstOrDefault(s=>s.Id == streamId)
+                    Stream = _context.Streams.FirstOrDefault(s => s.Id == streamId),
+                    Attempts = new List<Attempt>()
                 };
 
-                await _context.SportsmanCompetition.AddAsync(sportsmanCompetition);
+                var result = await _context.SportsmanCompetition.AddAsync(sportsmanCompetition);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogInformation(ex.Message);
             }
+
+            _cacheService.UpdateValue(key);
             return;
         }
 

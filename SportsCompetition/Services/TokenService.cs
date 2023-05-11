@@ -9,14 +9,17 @@ namespace AutorisationApi.Services
 {
     public class TokenService
     {
+        private readonly UserManager<IdentityUser<Guid>> _userManager;
         private readonly SymmetricSecurityKey _key;
-        public TokenService(IConfiguration configuration)
-        { 
+        public TokenService(IConfiguration configuration, UserManager<IdentityUser<Guid>> userManager)
+        {
             _key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration["TokenSecret"]));
+            _userManager = userManager;
         }
-        public string CreateToken(IdentityUser<Guid> user)
+        public async Task<string> CreateTokenAsync(IdentityUser<Guid> user)
         {
+
             var claims = new List<Claim>()
             {
                 new (JwtRegisteredClaimNames.NameId, user.Id.ToString()),
@@ -32,6 +35,10 @@ namespace AutorisationApi.Services
                 Expires = DateTime.Now.AddHours(2),
                 SigningCredentials = creds
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var tokenHandler = new JwtSecurityTokenHandler();
 

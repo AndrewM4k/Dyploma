@@ -128,8 +128,102 @@ namespace SportsCompetition.Services
             }
 
             sc.Attempts
-                .FirstOrDefault(a => a.Number == attemptNumber).Weihgt = weight;
+                .First(a => a.Number == attemptNumber).Weihgt = weight;
             return weight;
+        }
+        public async Task<int> SetWeight(Guid sportsmanCompetition, int attemptNumber, int weight)
+        {
+            var sc = _context.SportsmanCompetition
+                .Include(sc => sc.Attempts)
+                .FirstOrDefault(sc => sc.Id == sportsmanCompetition);
+
+
+
+            var att = sc.Attempts
+                .FirstOrDefault(a => a.Number == attemptNumber);
+
+            att.Weihgt = weight;
+
+            await _context.SaveChangesAsync();
+            return att.Weihgt;
+        }
+        public async Task<string> SetAttemptResult(Guid sportsmanCompetitionId, int attemptNumber)
+        {
+            var sportsmanCompetition = _context.SportsmanCompetition
+                .Include(sc => sc.Attempts)
+                .First(sc => sc.Id == sportsmanCompetitionId);
+
+            if (sportsmanCompetition.Attempts.Count <= attemptNumber)
+            {
+                var count = sportsmanCompetition.Attempts.Count;
+                var @event = sportsmanCompetition.Attempts.First().EventId;
+
+                while (count != attemptNumber - 1)
+                {
+                    sportsmanCompetition.Attempts.Add(new Attempt()
+                    {
+                        Number = count + 1,
+                        EventId = @event
+                    });
+                }
+            }
+
+            var attempt = sportsmanCompetition.Attempts.FirstOrDefault(a => a.Number == attemptNumber);
+
+            if (attempt.Decisions.Count() < 3)
+            {
+                return "Some judges don't make a decision";
+            }
+
+            if (attempt.Decisions.Count() == 3)
+            {
+                var trues = 0;
+                var falses = 0;
+                foreach (var decision in attempt.Decisions)
+                {
+                    if (decision.JudgeDecision == true)
+                    {
+                        trues += 1;
+                    }
+                    else
+                    {
+                        falses += 1;
+                    }
+                }
+
+                if (trues > falses)
+                {
+                    attempt.AttemptResult = true;
+                }
+            }
+            return "result changed";
+        }
+        public async Task<string> JudgeDesigion(Guid sportsmanCompetitionId, int attemptNumber, Guid judgeId, bool judgeDesigion)
+        {
+            var sportsmanCompetition = _context.SportsmanCompetition
+                .Include(sc => sc.Attempts)
+                .Include(sc => sc.Stream)
+                .First(sc => sc.Id == sportsmanCompetitionId);
+
+            var judgesOfStream = sportsmanCompetition.Stream.Employees;
+            var judge = _context.Employees.First(j => j.Id == judgeId);
+
+            if (!judgesOfStream.Contains(judge))
+            {
+                return "Wrong Judge!";
+            }
+
+            var decisions = sportsmanCompetition.Attempts
+                .First(a => a.Number == attemptNumber)
+                .Decisions;
+
+            decisions.ToList().Add(new() 
+            {
+                JudgeDecision = judgeDesigion, Attempt = sportsmanCompetition.Attempts
+                .First(a => a.Number == attemptNumber)
+            });
+            await _context.SaveChangesAsync();
+            return "Desigion Added!";
         }
     }
 }

@@ -80,8 +80,9 @@ namespace SportsCompetition.Controllers
         {
             return await _sportsmanCompetitionService.GetAtteptWeight(sportsmanCompetition, atempt);
         }
+
         [HttpGet("setSportsmanCompetitionAttemptWeight")]
-        public async Task<SportsmanCompetition> SetWeight(Guid sportsmanCompetition, int attemptNumber, int weight)
+        public async Task<int> SetWeight(Guid sportsmanCompetition, int attemptNumber, int weight)
         {
             return await _sportsmanCompetitionService.SetWeight(sportsmanCompetition, attemptNumber, weight);
         }

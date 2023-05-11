@@ -156,6 +156,10 @@ namespace SportsCompetition.Persistance
 
             modelBuilder.Entity<RefreshToken>()
                 .HasKey(t => new { t.UserId, t.Token });
+
+            modelBuilder.Entity<Attempt>()
+                .HasMany(a => a.Decisions)
+                .WithOne(d => d.Attempt);
         }
     }
 }

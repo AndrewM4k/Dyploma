@@ -72,8 +72,10 @@ namespace SportsCompetition.Controllers
         public async Task<ActionResult> AddSportsman(AddSportsmanDto dto)
         {
             var sportsman = _mapper.Map<Sportsman>(dto);
-
-            _sportsmanService.AddSportsman(sportsman);
+            var username = dto.Username;
+            var email = dto.Email;
+            var password = dto.Password;
+            await _sportsmanService.AddSportsman(sportsman, username, email, password);
 
             return Ok();
         }

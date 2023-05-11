@@ -11,8 +11,8 @@ namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[CustomAuthorize(Role.Administrator)]
-    [Authorize]
+    [CustomAuthorize(Role.Administrator)]
+    //[Authorize]
     public class StreamController : ControllerBase
     {
         private readonly ILogger<StreamController> _logger;

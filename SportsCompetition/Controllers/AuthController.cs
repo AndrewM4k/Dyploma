@@ -67,7 +67,7 @@ namespace AutorisationApi.Controllers
             {
                 return Unauthorized();
             }
-            var token = _tokenService.CreateToken(user);
+            var token = await _tokenService.CreateTokenAsync(user);
 
             var result = new SignInResultDto
             {
@@ -91,7 +91,7 @@ namespace AutorisationApi.Controllers
 
             var result = new RefreshTokenResultDto
             {
-                AccessToken = _tokenService.CreateToken(token.User),
+                AccessToken = await _tokenService.CreateTokenAsync(token.User),
                 RefreshToken = await _refreshTokenService.CreateRefreshTokenAsync(token.User)
             };
 

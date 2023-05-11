@@ -54,8 +54,7 @@ namespace SportsCompetition.Services
             {
                 employee.User = new IdentityUser<Guid>()
                 {
-                    UserName = username,
-                    
+                    UserName = username
                 };
                 employee.Role = role;
 

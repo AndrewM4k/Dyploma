@@ -7,6 +7,7 @@
         public int Number { get; set; } = 1;
         public int Weihgt { get; set; }
         public bool AttemptResult { get; set; }
+        public IEnumerable<Decision> Decisions { get; set; }
         public SportsmanCompetition SportsmanCompetition { get; set; }
     }
 }
