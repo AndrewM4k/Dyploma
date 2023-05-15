@@ -11,8 +11,7 @@ namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [CustomAuthorize(Role.Secretary)]
-    [CustomAuthorize(Role.Administrator)]
+    [CustomAuthorize(Role.Administrator, Role.Secretary)]
     public class StandartController : ControllerBase
     {
         private readonly ILogger<StandartController> _logger;
@@ -20,7 +19,11 @@ namespace SportsCompetition.Controllers
         private readonly IMapper _mapper;
         private readonly StandartService _standartService;
 
-        public StandartController(ILogger<StandartController> logger, SportCompetitionDbContext context, IMapper mapper, StandartService standartService)
+        public StandartController(
+            ILogger<StandartController> logger, 
+            SportCompetitionDbContext context, 
+            IMapper mapper, 
+            StandartService standartService)
         {
             _logger = logger;
             _context = context;
@@ -28,32 +31,44 @@ namespace SportsCompetition.Controllers
             _standartService = standartService;
         }
 
-        [HttpGet("readAllStandarts")]
+        [HttpGet]
         public async Task<IEnumerable<GetStandartDto>> Get()
         {
-            return _mapper.ProjectTo<GetStandartDto>(await _standartService.GetAllStandarts());
+            var standarts = new List<GetStandartDto>();
+            try
+            {
+                foreach (var item in await _standartService.GetAllStandarts())
+                {
+                    standarts.Add(_mapper.Map<GetStandartDto>(item));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+            }
+            return standarts;
         }
 
-        [HttpPost("addStandart")]
+        [HttpPost]
         public async Task<ActionResult> AddStandart(AddStandartDto dto)
         {
             var standart = _mapper.Map<Standart>(dto);
-            _standartService.AddStandart(standart);
+            await _standartService.AddStandart(standart);
             return Ok();
         }
 
-        [HttpPut("updateStandart")]
+        [HttpPut]
         public async Task<ActionResult> UpdateStandart(UpdateStandartDto dto)
         {
             var standart = _mapper.Map<Standart>(dto);
-            _standartService.UpdateStandart(standart);
+            await _standartService.UpdateStandart(standart);
             return Ok();
         }
 
-        [HttpDelete("deleteStandart/{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> DeleteStandart(Guid id)
         {
-            _standartService.DeleteStandart(id);
+            await _standartService.DeleteStandart(id);
             return Ok();
         }
     }

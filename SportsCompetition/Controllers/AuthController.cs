@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SportsCompetition.Dtos;
+using SportsCompetition.Enums;
+using SportsCompetition.Filters;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
 using SportsCompetition.Services;
@@ -55,8 +57,7 @@ namespace AutorisationApi.Controllers
         public async Task<ActionResult<SignInResultDto>> SignInAsync(SingInDto dto)
         {
             var user = await _userManager.Users
-                .SingleOrDefaultAsync(u => u.NormalizedUserName == dto.Username.ToUpper() ||
-                                             u.NormalizedEmail == dto.Email.ToUpper());
+                .SingleOrDefaultAsync(u => u.NormalizedUserName == dto.Username.ToUpper());
 
             if (user == null) { return Unauthorized(); }
 

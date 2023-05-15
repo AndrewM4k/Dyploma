@@ -16,6 +16,7 @@ namespace SportsCompetition.Persistance
         public DbSet<Record> Record { get; set; }
         public DbSet<Standart> Standart { get; set; }
         public DbSet<Competition> Competition { get; set; }
+        public DbSet<Decision> Decisions { get; set; }
         public DbSet<SportsmanCompetition> SportsmanCompetition { get; set; }
         public DbSet<Models.Stream> Streams { get; set; }
         public DbSet<Attempt> Attempt { get; set; }

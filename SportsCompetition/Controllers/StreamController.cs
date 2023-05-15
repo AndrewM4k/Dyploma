@@ -11,8 +11,7 @@ namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [CustomAuthorize(Role.Administrator)]
-    //[Authorize]
+    [CustomAuthorize(Role.Administrator, Role.Secretary)]
     public class StreamController : ControllerBase
     {
         private readonly ILogger<StreamController> _logger;
@@ -68,19 +67,30 @@ namespace SportsCompetition.Controllers
             return Ok();
         }
 
-        [HttpPost("creationOfStreamGAVNO")]
+        [HttpPost("streamInit")]
         public async Task<ActionResult> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamId, int numberofStream)
         {
             await _streamService.CreationStream(sportsmanCompetitions, @event, streamId, numberofStream);
             return Ok();
         }
 
-        [HttpPost("addJudgesToStreamGAVNO")]
+        [HttpPost("streamJudjes")]
         public async Task<ActionResult> AddJudgesToStream(Guid streamId, List<Guid> judges)
         {
             await _streamService.AddJudgesToStream(streamId, judges);
             return Ok();
         }
-            
+
+        [HttpPut("streamJudjes")]
+        public async Task<ActionResult> SetJudgesToStream(Guid streamId)
+        {
+            return Ok(await _streamService.SetJudgesToStream(streamId));
+        }
+
+        [HttpGet("streamSportsmanCompetition")]
+        public async Task<ActionResult> GetJudgesToStream(Guid streamId)
+        {
+            return Ok(await _streamService.GetStreamSportsmanCompetition(streamId));
+        }
     }
 }

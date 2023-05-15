@@ -44,6 +44,20 @@ namespace ApiWithEF.Common
 
             CreateMap<GetSportsmanCompetitionDto, SportsmanCompetition>();
             CreateMap<SportsmanCompetition, GetSportsmanCompetitionDto>();
+
+            CreateMap<AddStandartDto, Standart>();
+            CreateMap<Standart, AddStandartDto>();
+            CreateMap<GetStandartDto, Standart>();
+            CreateMap<Standart, GetStandartDto>();
+            CreateMap<UpdateStandartDto, Standart>();
+            CreateMap<Standart, UpdateStandartDto>();
+
+            CreateMap<AddRecordDto, Record>();
+            CreateMap<Record, AddRecordDto>();
+            CreateMap<GetRecordDto, Record>();
+            CreateMap<Record, GetRecordDto>();
+            CreateMap<UpdateRecordDto, Record>();
+            CreateMap<Record, UpdateRecordDto>();
         }
     }
 }

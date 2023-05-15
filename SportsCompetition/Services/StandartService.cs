@@ -22,14 +22,14 @@ namespace SportsCompetition.Services
             _cacheService = cacheService;
         }
 
-        public async Task<IQueryable<Standart>> GetAllStandarts()
+        public async Task<IEnumerable<Standart>> GetAllStandarts()
         {
             const string key = "all-standarts";
-            var cached = _cacheService.GetValue<List<Standart>>(key).AsQueryable();
+            var cached = _cacheService.GetValue<List<Standart>>(key);
 
             if (cached == null)
             {
-                var actual = _context.Standart.ToList();
+                var actual = await _context.Standart.ToListAsync();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);
@@ -93,7 +93,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }

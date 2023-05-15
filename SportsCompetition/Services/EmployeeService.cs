@@ -36,7 +36,7 @@ namespace SportsCompetition.Services
 
             if (cached == null)
             {
-                var actual = _context.Employees.ToList();
+                var actual = await _context.Employees.ToListAsync();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportsCompetition.Persistance;
 
@@ -11,9 +12,10 @@ using SportsCompetition.Persistance;
 namespace SportsCompetition.Migrations
 {
     [DbContext(typeof(SportCompetitionDbContext))]
-    partial class SportCompetitionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230512190716_StandartsAndRecords")]
+    partial class StandartsAndRecords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,8 +227,8 @@ namespace SportsCompetition.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AttemptResult")
-                        .HasColumnType("int");
+                    b.Property<bool>("AttemptResult")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
@@ -312,7 +314,7 @@ namespace SportsCompetition.Migrations
 
                     b.HasIndex("AttemptId");
 
-                    b.ToTable("Decisions");
+                    b.ToTable("Decision");
                 });
 
             modelBuilder.Entity("SportsCompetition.Models.Employee", b =>

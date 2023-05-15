@@ -7,9 +7,8 @@ using SportsCompetition.Services;
 using WebApplication1.Cache;
 using StackExchange.Redis;
 using SportsCompetition.Extencions;
-using Microsoft.AspNetCore.Identity;
-using SportsCompetition.Models;
 using SportsCompetition.Persistance;
+using FluentValidation;
 
 namespace SportsCompetition
 {
@@ -25,7 +24,12 @@ namespace SportsCompetition
             builder.Services.AddScoped<EventService>();
             builder.Services.AddScoped<EmployeeService>();
             builder.Services.AddScoped<SportsmanService>();
+            builder.Services.AddScoped<StandartService>();
+            builder.Services.AddScoped<RecordService>();
+            builder.Services.AddScoped<RolesService>();
             builder.Services.AddScoped<SportsmanCompetitionService>();
+
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Scoped);
 
             builder.Services.AddIdentityServicer(builder.Configuration);
             builder.Services.AddScoped<TokenService>();
@@ -51,7 +55,7 @@ namespace SportsCompetition
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef') Password_04Adminisrator ",
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef') Password_04Administrator ",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,

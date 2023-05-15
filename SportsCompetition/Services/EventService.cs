@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using SportsCompetition.Dtos;
 using SportsCompetition.Models;
 using SportsCompetition.Persistance;
+using System.Collections.Generic;
+using System.Linq;
 using WebApplication1.Cache;
 
 namespace SportsCompetition.Services
@@ -110,43 +112,6 @@ namespace SportsCompetition.Services
             return @event;
         }
 
-        public async Task<int> SetWeight(SportsmanCompetition sportsmanCompetition, int attemptNumber, int weight)
-        {
-            var sc = _context.SportsmanCompetition
-                .Include(sc => sc.Attempts)
-                .FirstOrDefault(sc => sc.Id == sportsmanCompetition.Id);
-            try
-            {
-                if (sc == null)
-                {
-                    new Exception("sportsmanCompetition is not exist");
-                }
-            }
-            catch (Exception exception)
-            {
-                _logger.LogInformation(exception.Message);
-            }
-
-            sc.Attempts
-                .First(a => a.Number == attemptNumber).Weihgt = weight;
-            return weight;
-        }
-        public async Task<int> SetWeight(Guid sportsmanCompetition, int attemptNumber, int weight)
-        {
-            var sc = _context.SportsmanCompetition
-                .Include(sc => sc.Attempts)
-                .FirstOrDefault(sc => sc.Id == sportsmanCompetition);
-
-
-
-            var att = sc.Attempts
-                .FirstOrDefault(a => a.Number == attemptNumber);
-
-            att.Weihgt = weight;
-
-            await _context.SaveChangesAsync();
-            return att.Weihgt;
-        }
         public async Task<string> SetAttemptResult(Guid sportsmanCompetitionId, int attemptNumber)
         {
             var sportsmanCompetition = _context.SportsmanCompetition
@@ -168,9 +133,12 @@ namespace SportsCompetition.Services
                 }
             }
 
-            var attempt = sportsmanCompetition.Attempts.FirstOrDefault(a => a.Number == attemptNumber);
+            var attempt = sportsmanCompetition.Attempts.First(a => a.Number == attemptNumber);
+            var id = attempt.Id;
 
-            if (attempt.Decisions.Count() < 3)
+            var attempts = _context.Attempt.Include(a => a.Decisions).First(a=>a.Id == id);
+
+            if (attempts.Decisions.Count() < 3)
             {
                 return "Some judges don't make a decision";
             }
@@ -193,11 +161,17 @@ namespace SportsCompetition.Services
 
                 if (trues > falses)
                 {
-                    attempt.AttemptResult = true;
+                    attempt.AttemptResult = Enums.Status.GoodLift;
+                }
+                else 
+                {
+                    attempt.AttemptResult = Enums.Status.NoLift; 
                 }
             }
+            await _context.SaveChangesAsync();
             return "result changed";
         }
+
         public async Task<string> JudgeDesigion(Guid sportsmanCompetitionId, int attemptNumber, Guid judgeId, bool judgeDesigion)
         {
             var sportsmanCompetition = _context.SportsmanCompetition
@@ -205,23 +179,24 @@ namespace SportsCompetition.Services
                 .Include(sc => sc.Stream)
                 .First(sc => sc.Id == sportsmanCompetitionId);
 
-            var judgesOfStream = sportsmanCompetition.Stream.Employees;
+            var streamId = sportsmanCompetition.Stream.Id;
+            var stream = _context.Streams.Include(s => s.Employees).First(s => s.Id == streamId);
+            var judgesOfStream = stream.Employees;
             var judge = _context.Employees.First(j => j.Id == judgeId);
 
             if (!judgesOfStream.Contains(judge))
             {
                 return "Wrong Judge!";
             }
-
-            var decisions = sportsmanCompetition.Attempts
-                .First(a => a.Number == attemptNumber)
-                .Decisions;
-
-            decisions.ToList().Add(new() 
+            var desision = new Decision()
             {
-                JudgeDecision = judgeDesigion, Attempt = sportsmanCompetition.Attempts
+                JudgeDecision = judgeDesigion,
+                Attempt = sportsmanCompetition.Attempts
                 .First(a => a.Number == attemptNumber)
-            });
+            };
+            var attId = sportsmanCompetition.Attempts.First(a => a.Number == attemptNumber).Id;
+             _context.Attempt.Include(a => a.Decisions).First(a => a.Id == attId).Decisions.Add(desision);
+            
             await _context.SaveChangesAsync();
             return "Desigion Added!";
         }

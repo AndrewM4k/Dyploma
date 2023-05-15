@@ -6,12 +6,14 @@ using SportsCompetition.Models;
 using Microsoft.AspNetCore.Authorization;
 using SportsCompetition.Persistance;
 using SportsCompetition.Services;
+using SportsCompetition.Filters;
+using SportsCompetition.Enums;
 
 namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [CustomAuthorize(Role.Administrator, Role.Secretary)]
     public class RecordController : ControllerBase
     {
 
@@ -21,7 +23,11 @@ namespace SportsCompetition.Controllers
         private readonly RecordService _recordService;
 
 
-        public RecordController(ILogger<RecordController> logger, SportCompetitionDbContext context, IMapper mapper, RecordService recordService)
+        public RecordController(
+            ILogger<RecordController> logger, 
+            SportCompetitionDbContext context, 
+            IMapper mapper, 
+            RecordService recordService)
         {
             _logger = logger;
             _context = context;
@@ -29,32 +35,44 @@ namespace SportsCompetition.Controllers
             _recordService = recordService;
         }
 
-        [HttpGet("readAllRecords")]
+        [HttpGet]
         public async Task<IEnumerable<GetRecordDto>> Get()
         {
-            return _mapper.ProjectTo<GetRecordDto>(await _recordService.GetAllRecords());
+            var records = new List<GetRecordDto>();
+            try
+            {
+                foreach (var item in await _recordService.GetAllRecords())
+                {
+                    records.Add(_mapper.Map<GetRecordDto>(item));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+            }
+            return records;
         }
 
-        [HttpPost("addRecord")]
+        [HttpPost]
         public async Task<IActionResult> AddRecord(AddRecordDto dto)
         {
             var record = _mapper.Map<Record>(dto);
-            _recordService.AddRecord(record);
+            await _recordService.AddRecord(record);
             return Ok();
         }
 
-        [HttpPut("updateRecord")]
+        [HttpPut]
         public async Task<IActionResult> UpdateRecord(UpdateRecordDto dto)
         {
             var record = _mapper.Map<Record>(dto);
-            _recordService.UpdateRecord(record);
+            await _recordService.UpdateRecord(record);
             return Ok();
         }
 
-        [HttpDelete("deleteRecord/{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<IActionResult> DeleteRecord(Guid id)
         {
-            _recordService.DeleteRecord(id);
+            await _recordService.DeleteRecord(id);
             return Ok();
         }
     }

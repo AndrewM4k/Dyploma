@@ -24,10 +24,10 @@ namespace SportsCompetition.Services
             _cacheService = cacheService;
         }
 
-        public async Task<IQueryable<Record>> GetAllRecords()
+        public async Task<IEnumerable<Record>> GetAllRecords()
         {
             const string key = "all-records";
-            var cached = _cacheService.GetValue<List<Record>>(key).AsQueryable();
+            var cached = _cacheService.GetValue<List<Record>>(key);
 
             if (cached == null)
             {
@@ -52,7 +52,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
@@ -70,7 +70,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
@@ -96,7 +96,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }

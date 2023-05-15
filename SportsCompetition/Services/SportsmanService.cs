@@ -33,7 +33,7 @@ namespace SportsCompetition.Services
 
             if (cached == null)
             {
-                var actual = _context.Sportsmans.ToList();
+                var actual = await _context.Sportsmans.ToListAsync();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);
@@ -50,7 +50,7 @@ namespace SportsCompetition.Services
 
             if (cached == null)
             {
-                var actual = _context.Competition.ToList();
+                var actual = await _context.Competition.ToListAsync();
                 if (actual.ToList().Count != 0)
                 {
                     _cacheService.SetValue(key, actual);

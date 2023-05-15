@@ -51,6 +51,12 @@ namespace SportsCompetition.Services
             try
             {
                 var @event = _context.Event.FirstOrDefault(e => e.Id == eventid);
+
+                if (@event == null)
+                {
+                    new Exception("event not exist");
+                }
+
                 stream.Event = @event;
                 await _context.AddAsync(stream);
                 await _context.SaveChangesAsync();
@@ -73,7 +79,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
@@ -96,7 +102,7 @@ namespace SportsCompetition.Services
 
                 await transaction.CommitAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
             }
@@ -105,14 +111,23 @@ namespace SportsCompetition.Services
 
         public async Task<Models.Stream> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamid, int numberofStream)
         {
+
             var stream = _context.Streams.FirstOrDefault(s => s.Id == streamid);
-            
             try
             {
                 var list = new List<SportsmanCompetition>();
                 foreach (var item in sportsmanCompetitions)
                 {
-                    list.Add(_context.SportsmanCompetition.FirstOrDefault(sc => sc.Id == item));
+                    var sc = _context.SportsmanCompetition.FirstOrDefault(sc => sc.Id == item);
+                    if (sc == null)
+                    {
+                        _logger.LogInformation("SportsmanCompetition is no exist");
+                    }
+
+                    if (sc != null)
+                    {
+                        list.Add(sc);
+                    }
                 }
 
                 stream.SportsmanCompetitions = list;
@@ -180,13 +195,12 @@ namespace SportsCompetition.Services
             {
                 foreach (var judge in judges)
                 {
-
                     var employee = _context.Employees.FirstOrDefault(s => s.Id == judge);
                     if (employee.Role != Enums.Role.Judge)
                     {
                         new Exception("wrong employee, not judge");
                     }
-                    employee.Streams.Add(stream);
+                    stream.Employees.Add(employee);
                 }
             }
             catch (Exception ex)
@@ -197,6 +211,49 @@ namespace SportsCompetition.Services
             await _context.SaveChangesAsync();
 
             return stream;
+        }
+        public async Task<IEnumerable<Guid>> SetJudgesToStream(Guid streamId)
+        {
+            var stream = await _context.Streams
+               .Include(s => s.Employees)
+               .FirstOrDefaultAsync(s => s.Id == streamId);
+            var employeesId = new List<Guid>();
+            if (stream == null)
+            {
+                return employeesId;
+            }
+            foreach (var judge in stream.Employees) { employeesId.Add(judge.Id); }
+            return employeesId;
+        }
+        public async Task<IEnumerable<Guid>> GetStreamSportsmanCompetition(Guid streamId)
+        {
+            var stream = await _context.Streams
+               .Include(s => s.SportsmanCompetitions)
+               .FirstOrDefaultAsync(s => s.Id == streamId);
+
+            var sportsmanCompetitionsId = new List<Guid>();
+            if (stream == null)
+            {
+                return sportsmanCompetitionsId;
+            }
+            foreach (var judge in stream.SportsmanCompetitions) { sportsmanCompetitionsId.Add(judge.Id); }
+            return sportsmanCompetitionsId;
+        }
+
+        public async Task<IEnumerable<Guid>> GetJudgeStreams(Guid judgeId)
+        {
+            var judge = await _context.Employees
+               .Include(e => e.Streams)
+               .FirstOrDefaultAsync(e => e.Id == judgeId);
+
+            var streamsId = new List<Guid>();
+            if (judge.Streams == null)
+            {
+                return streamsId;
+            }
+
+            foreach (var stream in judge.Streams) { streamsId.Add(stream.Id); }
+            return streamsId;
         }
     }
 }

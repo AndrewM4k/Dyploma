@@ -15,70 +15,55 @@ namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [CustomAuthorize(Role.Administrator)]
     public class RolesController : Controller
     {
         private readonly ILogger<RecordController> _logger;
         private readonly SportCompetitionDbContext _context;
         private readonly UserManager<IdentityUser<Guid>> _userManager;
         private readonly IMapper _mapper;
+        private readonly RolesService _rolesService;
 
-        public RolesController(UserManager<IdentityUser<Guid>> userManager, ILogger<RecordController> logger, SportCompetitionDbContext context, IMapper mapper)
+        public RolesController(
+            UserManager<IdentityUser<Guid>> userManager,
+            ILogger<RecordController> logger,
+            SportCompetitionDbContext context,
+            IMapper mapper,
+            RolesService rolesService)
         {
             _userManager = userManager;
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _rolesService = rolesService;
         }
-        [HttpGet("GetRoles")]
+        [HttpGet("{id:Guid}")]
         public async Task<IActionResult> Get(Guid emloyeeId)
         {
-            try
+            var result = await _rolesService.GetRoles(emloyeeId);
+            if (result.Any())
             {
-                var emp = _context.Employees
-                .Include(e => e.User)
-                .FirstOrDefault(e => e.Id == emloyeeId);
-
-                IdentityUser<Guid> user = await _userManager.FindByIdAsync(emp.UserId.ToString());
-                if (user != null)
-                {
-                    // получем список ролей пользователя
-                    var userRoles = await _userManager.GetRolesAsync(user);
-
-                    return Ok(userRoles);
-                }
+                return Ok(result);
             }
-            catch (Exception)
-            {
-                throw;
-            }
-            return BadRequest( "User not exist");
+            else return BadRequest();
         }
 
-            [HttpGet("GetUsers")]
+        [HttpGet("getUsersByRole")]
         public async Task<IEnumerable<IdentityUser<Guid>>> GetUser(Role role)
         {
-            var users = await _userManager.GetUsersInRoleAsync(role.ToString());
-            return users;
+            return await _rolesService.GetUser(role);
         }
 
-        [HttpPost("EditById")]
+        [HttpPost("editRoleById")]
         public async Task<IActionResult> Edit(Guid userId, Role role)
         {
-            IdentityUser<Guid> user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user != null)
+            var result = await _rolesService.Edit(userId, role);
+            if (result == "Ok")
             {
-                // получем список ролей пользователя
-                var userRole = await _userManager.GetRolesAsync(user);
-                
-                await _userManager.AddToRoleAsync(user, role.ToString());
-
-                await _userManager.RemoveFromRolesAsync(user, userRole);
-
                 return Ok();
             }
 
-            return BadRequest("User not exist");
+            return BadRequest(result);
         }
     }
 }

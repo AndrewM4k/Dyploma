@@ -69,14 +69,14 @@ namespace SportsCompetition
                         },
                         new Employee()
                         {
-                            Name = "Adminisrator",
-                            Surname = "Adminisrator",
+                            Name = "Administrator",
+                            Surname = "Administrator",
                             Role = Enums.Role.Administrator,
                             User = new IdentityUser<Guid>()
                             {
                                 Email = "andrey.mar4uk2011@yandex.ru",
                                 EmailConfirmed = true,
-                                UserName = "Adminisrator",
+                                UserName = "Administrator",
                                 NormalizedUserName = "ANDREY.MAR4UK2011@YANDEX.RU"
                             }
                         }
@@ -98,17 +98,17 @@ namespace SportsCompetition
                     {
                         new Competition()
                         {
-                            Name = "Bencpress",
+                            Name = Enums.Competitions.Benchpress.ToString(),
                             Equpment = "Raw"
                         },
                         new Competition()
                         {
-                            Name = "Squat",
+                            Name = Enums.Competitions.Squat.ToString(),
                             Equpment = "Raw"
                         },
                         new Competition()
                         {
-                            Name = "Deadlift",
+                            Name = Enums.Competitions.Deadlift.ToString(),
                             Equpment = "Raw"
                         }
                     };

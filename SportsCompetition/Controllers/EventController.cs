@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using SportsCompetition.Services;
 using SportsCompetition.Persistance;
+using SportsCompetition.Filters;
+using SportsCompetition.Enums;
 
 namespace SportsCompetition.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [CustomAuthorize(Role.Administrator, Role.Secretary)]
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
@@ -20,7 +23,11 @@ namespace SportsCompetition.Controllers
         private readonly IMapper _mapper;
         private readonly EventService _eventService;
 
-        public EventController(ILogger<EventController> logger, SportCompetitionDbContext context, IMapper mapper, EventService eventService)
+        public EventController(
+            ILogger<EventController> logger, 
+            SportCompetitionDbContext context, 
+            IMapper mapper, 
+            EventService eventService)
         {
             _logger = logger;
             _context = context;
@@ -28,7 +35,7 @@ namespace SportsCompetition.Controllers
             _eventService = eventService;
         }
 
-        [HttpGet("readAllEvents")]
+        [HttpGet]
         public async Task<IEnumerable<GetEventDto>> Get()
         {
             var events = new List<GetEventDto>();
@@ -46,7 +53,7 @@ namespace SportsCompetition.Controllers
             return events;
         }
 
-        [HttpPost("addEvent")]
+        [HttpPost]
         public async Task<IActionResult> AddEvent(AddEventDto dto)
         {
             var @event = _mapper.Map<Event>(dto);
@@ -55,7 +62,7 @@ namespace SportsCompetition.Controllers
             return Ok();
         }
 
-        [HttpPut("updateEvent")]
+        [HttpPut]
         public async Task<IActionResult> UpdateEvent(UpdateEventDto dto)
         {
             var @event = _mapper.Map<Event>(dto);
@@ -64,11 +71,23 @@ namespace SportsCompetition.Controllers
             return Ok();
         }
 
-        [HttpDelete("deleteEvent/{id:Guid}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<IActionResult> DeleteEvent(Guid id)
         {
             await _eventService.DeleteEvent(id);
             return Ok();
+        }
+
+        [HttpPut("attemptResult")]
+        public async Task<IActionResult> SetAttemptResult(Guid sportsmanCompetitionId, int attemptNumber)
+        {
+            return Ok(await _eventService.SetAttemptResult(sportsmanCompetitionId, attemptNumber));
+        }
+
+        [HttpPut("judgeDesigion")]
+        public async Task<IActionResult> JudgeDesigion(Guid sportsmanCompetitionId, int attemptNumber, Guid judgeId, bool judgeDesigion)
+        {
+            return Ok(await _eventService.JudgeDesigion(sportsmanCompetitionId, attemptNumber, judgeId, judgeDesigion));
         }
     }
 }
