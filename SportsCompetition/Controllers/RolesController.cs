@@ -54,7 +54,7 @@ namespace SportsCompetition.Controllers
             return await _rolesService.GetUser(role);
         }
 
-        [HttpPost("editRoleById")]
+        [HttpPut("editRoleById")]
         public async Task<IActionResult> Edit(Guid userId, Role role)
         {
             var result = await _rolesService.Edit(userId, role);

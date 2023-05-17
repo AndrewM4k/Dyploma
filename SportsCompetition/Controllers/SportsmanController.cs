@@ -43,7 +43,7 @@ namespace SportsCompetition.Controllers
             _validator = validator;
         }
 
-        [HttpGet("sportsmans")]
+        [HttpGet]
         public async Task<IEnumerable<GetSportsmanDto>> GetSportsmans()
         {
             var sportsmans = new List<GetSportsmanDto>();
@@ -79,7 +79,7 @@ namespace SportsCompetition.Controllers
             return competitions;
         }
 
-        [HttpPost("sportsman")]
+        [HttpPost]
         public async Task<ActionResult> AddSportsman(AddSportsmanDto dto)
         {
 
@@ -97,7 +97,7 @@ namespace SportsCompetition.Controllers
             return Ok();
         }
 
-        [HttpPut("sportsman")]
+        [HttpPut]
         public async Task<ActionResult> UpdateSportsman(UpdateSportsmanDto dto)
         {
             var sportsman = _mapper.Map<Sportsman>(dto);
@@ -139,13 +139,13 @@ namespace SportsCompetition.Controllers
             return sportsmanCompetitions;
         }
 
-        [HttpPut("setAttemptsResult")]
+        [HttpPut("AttemptsResult")]
         public async Task<ActionResult<bool>> SetAttemptsResult(Guid sportsmanCompetitionId, Status attemptResult, int numberAttempt)
         {
             return Ok(await _sportsmanCompetitionService.SetAttemptsResult(sportsmanCompetitionId, attemptResult, numberAttempt));
         }
 
-        [HttpGet("getAttemptsResult")]
+        [HttpGet("AttemptsResult")]
         public async Task<ActionResult<string>> GetAttemptsResult(Guid sportsmanCompetitionId, int numberAttempt)
         {
             return Ok(await _sportsmanCompetitionService.GetAttemptsResult(sportsmanCompetitionId, numberAttempt));

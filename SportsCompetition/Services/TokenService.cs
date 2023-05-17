@@ -19,7 +19,6 @@ namespace AutorisationApi.Services
         }
         public async Task<string> CreateTokenAsync(IdentityUser<Guid> user)
         {
-
             var claims = new List<Claim>()
             {
                 new (JwtRegisteredClaimNames.NameId, user.Id.ToString()),
@@ -28,6 +27,7 @@ namespace AutorisationApi.Services
             var roles = await _userManager.GetRolesAsync(user);
 
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
             var creds = new SigningCredentials(_key,
                 SecurityAlgorithms.HmacSha512Signature);
 

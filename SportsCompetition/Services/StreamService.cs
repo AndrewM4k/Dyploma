@@ -109,12 +109,14 @@ namespace SportsCompetition.Services
             _cacheService.UpdateValue(key);
         }
 
-        public async Task<Models.Stream> CreationStream(Guid[] sportsmanCompetitions, Guid @event, Guid streamid, int numberofStream)
+        public async Task<Models.Stream> CreationStream(Guid @event, Guid streamid, int numberofStream)
         {
-
-            var stream = _context.Streams.FirstOrDefault(s => s.Id == streamid);
+            var stream = _context.Streams
+                .Include(s=>s.Event)
+                .FirstOrDefault(s => s.Id == streamid);
             try
             {
+                var sportsmanCompetitions = await GetStreamSportsmanCompetition(streamid);
                 var list = new List<SportsmanCompetition>();
                 foreach (var item in sportsmanCompetitions)
                 {
@@ -212,7 +214,7 @@ namespace SportsCompetition.Services
 
             return stream;
         }
-        public async Task<IEnumerable<Guid>> SetJudgesToStream(Guid streamId)
+        public async Task<IEnumerable<Guid>> GetJudgesToStream(Guid streamId)
         {
             var stream = await _context.Streams
                .Include(s => s.Employees)

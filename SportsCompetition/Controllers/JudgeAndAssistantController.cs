@@ -37,7 +37,7 @@ namespace SportsCompetition.Controllers
             _streamService = streamService;
         }
 
-        [HttpGet("getSportsmanCompetitionAttemptWeight")]
+        [HttpGet("sportsmanCompetitionAttemptWeight")]
         public async Task<int> GetAtteptWeight(Guid sportsmanCompetition, int attempt)
         {
             return await _sportsmanCompetitionService.GetAtteptWeight(sportsmanCompetition, attempt);

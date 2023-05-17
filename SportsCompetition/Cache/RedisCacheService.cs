@@ -66,7 +66,7 @@ namespace WebApplication1.Cache
 
         public void SetValue(string key, string value)
         {
-            _database.StringSet(key, value, expiry: TimeSpan.FromHours(2));
+            _database.StringSet(key, value, expiry: TimeSpan.FromMinutes(30));
         }
 
         public T UpdateValue<T>(string key)
